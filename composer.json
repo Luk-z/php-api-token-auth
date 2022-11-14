@@ -1,0 +1,18 @@
+{
+    "name": "luk-z/php-api-token-auth",
+    "description": "Simple PHP REST API token-based authentication",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LukZ\\PhpApiTokenAuth\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Luca Ziliani",
+            "email": "lucagcc@gmail.com"
+        }
+    ],
+    "require": {}
+}
