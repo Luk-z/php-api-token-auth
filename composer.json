@@ -1,18 +1,24 @@
 {
-    "name": "luk-z/php-api-token-auth",
-    "description": "Simple PHP REST API token-based authentication",
-    "type": "library",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "LukZ\\PhpApiTokenAuth\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Luca Ziliani",
-            "email": "lucagcc@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "luk-z/php-api-token-auth",
+  "description": "Simple PHP REST API token-based authentication",
+  "homepage": "https://github.com/Luk-z/php-api-token-auth",
+  "keywords": [
+    "php",
+    "jwt"
+  ],
+  "authors": [
+    {
+      "name": "Luca Ziliani",
+      "email": "lucagcc@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "license": "MIT",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "LukZ\\PhpApiTokenAuth\\": "src/"
+    }
+  },
+  "type": "library"
 }
