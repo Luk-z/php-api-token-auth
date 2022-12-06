@@ -4,27 +4,35 @@ This library is based on https://www.yiiframework.com/wiki/2568/jwt-authenticati
 
 ## Functions
 
-### Authenticate
+### PATA::init()
 
-Required params:
+Initialize the library passing dome configuration information.
 
--   access token: ca be passed as headers field or GET/POST param (default name 'at')
+Params: TODO
 
-Success:
+Returns: void
+
+### PATA::authenticate()
+
+Take an access token and check if is valid/not expired
+
+Params:
+
+- `string` accessToken (required)
+- `bool` checkExpired (optional): default to `true`
+
+Returns:
+
+- Success response
 
 ```php
 [
     "result" => true,
-    "data" => [...]
+    "data" => ["sid" => string] // user session id
 ]
 ```
 
-Errors:
-
--   PAJA_ERROR_AUTH_INVALID_TOKEN
--   PAJA_ERROR_AUTH_TOKEN_NOT_FOUND
--   PAJA_ERROR_AUTH_TOKEN_DUPLICATED
--   PAJA_ERROR_AUTH_TOKEN_EXPIRED
+- Error response:
 
 ```php
 [
@@ -37,13 +45,24 @@ Errors:
 ]
 ```
 
-### Refresh Token
+- Error codes:
+  - PATA_ERROR_AUTH_INVALID_TOKEN
+  - PATA_ERROR_AUTH_TOKEN_NOT_FOUND
+  - PATA_ERROR_AUTH_TOKEN_DUPLICATED
+  - PATA_ERROR_AUTH_TOKEN_EXPIRED
 
-Required params:
+### PATA::refreshToken()
 
--   refresh token: must be passed as cookie (default name 'rn_rt')
+Takes an access token and refresh token and try to refresh a new access token. If refreshToken not passed try to get from cookies
 
-Success:
+Params:
+
+- `string` accessToken (required)
+- `string` refreshToken (required)
+
+Returns:
+
+- Success response
 
 ```php
 [
@@ -61,14 +80,7 @@ Success:
 ]
 ```
 
-Errors:
-
--   ... all error codes returnd by Authenticate
--   PAJA_ERROR_REFRESH_TOKEN_INVALID
--   PAJA_ERROR_REFRESH_TOKEN_NOT_FOUND
--   PAJA_ERROR_REFRESH_TOKEN_EXPIRED
--   PAJA_ERROR_REFRESH_TOKEN_DIFFERENT_SID
--   PAJA_ERROR_REFRESH_TOKEN_DUPLICATED
+- Error response:
 
 ```php
 [
@@ -81,3 +93,174 @@ Errors:
     "responseCode" => string, // suggested response code to return by endpoints
 ]
 ```
+
+- Error codes:
+  - ... all error codes returned by Authenticate
+  - PATA_ERROR_REFRESH_TOKEN_INVALID - suggested response code=422
+  - PATA_ERROR_REFRESH_TOKEN_NOT_FOUND - suggested response code=401
+  - PATA_ERROR_REFRESH_TOKEN_EXPIRED - suggested response code=401
+  - PATA_ERROR_REFRESH_TOKEN_DIFFERENT_SID - suggested response code=401
+  - PATA_ERROR_REFRESH_TOKEN_DUPLICATED - suggested response code=401
+
+### PATA::activate()
+
+Searches provided activation token and check validity then set user activated and set activation token expired
+
+Params:
+
+- `string` accessToken (required)
+
+Returns:
+
+- Success response
+
+```php
+[
+    "result" => true,
+    "data" => [
+        "queryResult" => int, // affected row (should be 1)
+    ]
+]
+```
+
+- Error response:
+
+```php
+[
+    "result" => false,
+    "error" => [
+        "message" => string,
+        "code" => string,
+    ],
+]
+```
+
+- Error codes:
+  - PATA_ERROR_ACTIVATE_TOKEN_NOTFOUND
+  - PATA_ERROR_ACTIVATE_DUPLICATED_TOKEN
+  - PATA_ERROR_ACTIVATE_TOKEN_USED
+  - PATA_ERROR_ACTIVATE_TOKEN_EXPIRED
+  - PATA_TOKEN_EXPIRATION_VALUE
+  - PATA_ERROR_ACTIVATE_TOKEN_DB_ERROR
+
+### PATA::registerUser()
+
+Creates a user with given email and password then send activation email. If user already exists.
+
+Params:
+
+- `string` email (required)
+- `string` password (required)
+
+Returns:
+
+- Success response
+
+```php
+[
+    "result" => true,
+    "data" => [
+        "id" => int, // userId
+        "emailSent" => bool, // whether the activation email is sent succesfully
+    ]
+]
+```
+
+- Error response:
+
+```php
+[
+    "result" => false,
+    "error" => [
+        "message" => string,
+        "code" => string,
+        "fields" => ["id"=>int], // userId
+    ],
+]
+```
+
+- Error codes:
+  - PATA_ERROR_REGISTRATION_EMAIL_EXITSTS
+  - PATA_ERROR_REGISTRATION_CREATE
+
+### PATA::loginUser()
+
+Check provided credentials then create a user session with refresh token, access token and session id. If provided credentials are wrong or usr isn't activated return an error
+
+Params:
+
+- `string` email (required)
+- `string` password (required)
+
+Returns:
+
+- Success response
+
+```php
+[
+    "result" => true,
+    "data"=>[
+        "user" => array,
+        "accessToken" => string,
+        "sid" => string,
+        "debug" => [
+            "rtResult" => bool, // whether the set_cookie has succedeed
+            "tokenInsertResult" => bool // whether the token is succesfully created in the database
+        ],
+    ]
+]
+```
+
+- Error response:
+
+```php
+[
+    "result" => false,
+    "error" => [
+        "message" => string,
+        "code" => string,
+    ],
+]
+```
+
+- Error codes:
+  - PATA_ERROR_WRONG_EMAIL
+  - PATA_ERROR_WRONG_PASSWORD
+  - PATA_ERROR_USER_NOT_ACTIVE
+
+### PATA::logoutUser()
+
+First executes authenticate() to check accessToken then delete user tokens associated to a specific sid
+
+Params:
+
+- `string` sid (required)
+- `accessToken` accessToken (required)
+
+Returns:
+
+- Success response
+
+```php
+[
+    "result" => true,
+    "data" => [
+        "queryResult" => int, // number of user session tokens deleted
+    ]
+]
+```
+
+- Error response:
+
+```php
+[
+    "result" => false,
+    "error" => [
+        "message" => string,
+        "code" => string,
+    ],
+]
+```
+
+- Error codes:
+  - ... all error codes returned by Authenticate
