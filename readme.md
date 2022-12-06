@@ -264,3 +264,17 @@ Returns:
 
 - Error codes:
   - ... all error codes returned by Authenticate
+
+## Developing
+
+### Install php-cs-fixer
+
+```shell
+composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+```
+
+Usefull guides:
+
+- https://github.com/PHP-CS-Fixer/PHP-CS-Fixer
+- https://github.com/junstyle/vscode-php-cs-fixer
+- https://medium.com/@armorasha/php-cs-fixer-how-to-install-vs-code-2020-windows-10-75b6d5ed03ce
