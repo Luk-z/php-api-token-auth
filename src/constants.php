@@ -4,9 +4,9 @@
 // define("PATA_CURRENT_SCHEME", "https");
 // define("PATA_CURRENT_DOMAIN", PATA_CURRENT_SCHEME."://".PATA_CURRENT_HOST."/");
 
-define("PATA_HELPERS_PATH", PATA_DIR."/Helpers");
-define("PATA_DB_PATH", PATA_DIR."/Db");
-define("PATA_SECURITY_PATH", PATA_DIR."/Security");
+define("PATA_HELPERS_PATH", "Helpers");
+define("PATA_DB_PATH", "Db");
+define("PATA_SECURITY_PATH", "Security");
 
 define("PATA_TOKEN_TYPE_ACTIVATE_ACCOUNT", 'act');
 

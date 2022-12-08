@@ -2,6 +2,8 @@
 
 namespace PATA;
 
+require_once 'constants.php';
+
 /**
  * Php Api Token Authentication Class
  */
@@ -30,8 +32,8 @@ class PATA {
     self::$domainRefreshToken = $options["domainRefreshToken"] ?? 'api-develop.ronchesisrl.it';
 
     if(!isset($options["dbHandler"])){
-      require_once PATA_DB_PATH.'/LumenDB.php';
-      $dbHandler = new LumenDB();
+      // require_once PATA_DB_PATH.'/LumenDB.php';
+      $dbHandler = new Db\LumenDB();
     }
     else{
       $dbHandler = $options["dbHandler"];
@@ -39,8 +41,8 @@ class PATA {
 	  DbHelper::init(["handler" => $dbHandler]);
 
     if(!isset($options["hashHandler"])){
-      require_once PATA_SECURITY_PATH.'/LumenHash.php';
-      $hashHandler = new LumenHash();
+      // require_once PATA_SECURITY_PATH.'/LumenHash.php';
+      $hashHandler = new Security\LumenHash();
     }
     else{
       $hashHandler = $options["hashHandler"];
@@ -53,7 +55,7 @@ class PATA {
    * Take an access token and check if is valid/not expired
    */
   public static function authenticate($options = []){
-    return AuthHelper::authenticate($options);
+    return Helpers\AuthHelper::authenticate($options);
   }
 
   /**
@@ -64,7 +66,7 @@ class PATA {
   static function refreshToken($options=[]){
     $refreshToken = $options["refreshToken"] ?? $_COOKIE[PATA::$cookieRefreshTokenName] ?? "";
     $options["refreshToken"] = $refreshToken;
-    return AuthHelper::refreshToken($options);
+    return Helpers\AuthHelper::refreshToken($options);
   }
 
   /**
@@ -72,7 +74,7 @@ class PATA {
    * Searches provided activation token and check validity then set user activated and set activation token expired
    */
   static function activate($options=[]){
-    return AuthHelper::activate($options);
+    return Helpers\AuthHelper::activate($options);
   }
 
   /**
@@ -80,7 +82,7 @@ class PATA {
    * Creates a user with given email and password then send activation email. If user already exists.
    */
   static function registerUser($options=[]){
-    return AuthHelper::registerUser($options);
+    return Helpers\AuthHelper::registerUser($options);
   }
 
   /**
@@ -88,7 +90,7 @@ class PATA {
    * Check provided credentials then create a user session with refresh token, access token and session id. If provided credentials are wrong or usr isn't activated return an error
    */
   static function loginUser($options=[]){
-    return AuthHelper::loginUser($options);
+    return Helpers\AuthHelper::loginUser($options);
   }
 
   /**
@@ -96,6 +98,6 @@ class PATA {
    * First executes authenticate() to check accessToken then delete user tokens associated to a specific sid
    */
   static function logoutUser($options=[]){
-    return AuthHelper::logoutUser($options);
+    return Helpers\AuthHelper::logoutUser($options);
   }
 }

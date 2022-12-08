@@ -11,44 +11,44 @@ class AuthHelper {
     $email = $options["email"] ?? "";
     $password = $options["password"] ?? "";
 
-    ["data"=>["items" => $users]] = DbHelper::selectUser(["email" => $email]);
+    ["data"=>["items" => $users]] = Db\DbHelper::selectUser(["email" => $email]);
     if(count($users)>0){
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "Email already exists",
             "code" => PATA_ERROR_REGISTRATION_EMAIL_EXITSTS,
         ]]);
     }
 
-    $created = DateTimeHelper::getMysqlUTC();
+    $created = Helpers\DateTimeHelper::getMysqlUTC();
 
-    ["result"=>$result,"error"=>["message"=>$message],"data"=>["id"=>$id]] = DbHelper::createUser([
+    ["result"=>$result,"error"=>["message"=>$message],"data"=>["id"=>$id]] = Db\DbHelper::createUser([
         "created" => $created,
-        "password" => HashHelper::hash(["value"=>$password]),
+        "password" => Security\HashHelper::hash(["value"=>$password]),
         "email" => $email,
         "active" => "0",
     ]) + ["data"=>["id"=>""], "error"=>["message"=>"Error Inserting User in DB"]];
 
-    ["data"=>["queryResult" => $tokenInsertResult]] = DbHelper::createToken(["data"=>[
+    ["data"=>["queryResult" => $tokenInsertResult]] = Db\DbHelper::createToken(["data"=>[
         "created" => $created, 
         "modified" => $created, 
         "user_id" => $id, 
         "sid" => "",
-        "token" => AuthHelper::generateActivateAccountToken(),
+        "token" => Helpers\AuthHelper::generateActivateAccountToken(),
         "token_type" => PATA::$activateTokenName,
-        "expiration" => DateTimeHelper::getAccessTokenExpiration(["date"=>$created]),
+        "expiration" => Helpers\DateTimeHelper::getAccessTokenExpiration(["date"=>$created]),
     ]]);
 
     //@todo send email
 
     if(!$result){
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => $message,
             "code" => PATA_ERROR_REGISTRATION_CREATE,
             "fields" => ["id" => $id]
         ]]);
     }
 
-    return AppHelper::returnSuccess(["data"=>["id"=>$id, "emailSent" => true]]);
+    return Helpers\AppHelper::returnSuccess(["data"=>["id"=>$id, "emailSent" => true]]);
   }
 
   /**
@@ -59,27 +59,27 @@ class AuthHelper {
     $email = $options["email"] ?? "";
     $password = $options["password"] ?? "";
 
-    $encryptedPassword = HashHelper::hash(["value"=>$password]);
-    ["data"=>["items" => $users]] = DbHelper::selectUser([
+    $encryptedPassword = Security\HashHelper::hash(["value"=>$password]);
+    ["data"=>["items" => $users]] = Db\DbHelper::selectUser([
         "email" => $email
     ]);
 
     if(count($users)<=0){
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "Wrong email",
             "code" => PATA_ERROR_WRONG_EMAIL,
         ]]);
     }
 
-    if(!HashHelper::hashCheck(["value"=>$password, "hashedValue"=>$users[0]->password])){
-        return AppHelper::returnError(["error"=>[
+    if(!Security\HashHelper::hashCheck(["value"=>$password, "hashedValue"=>$users[0]->password])){
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "Wrong password",
             "code" => PATA_ERROR_WRONG_PASSWORD,
         ]]);
     }
 
     if(!$users[0]->active){
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "User not active",
             "code" => PATA_ERROR_USER_NOT_ACTIVE,
         ]]);
@@ -93,7 +93,7 @@ class AuthHelper {
         "tokenInsertResult"=>$tokenInsertResult,
     ]] = self::generateAndSaveUserTokens(["userId"=>$users[0]->id]);
 
-    return AppHelper::returnSuccess([
+    return Helpers\AppHelper::returnSuccess([
         "data"=>[
             "user" => $users[0],
             "accessToken" => $accessToken,
@@ -117,15 +117,15 @@ class AuthHelper {
     $authResult = self::authenticate(["accessToken"=>$accessToken]);
 
     if(!$authResult["result"]){
-        return AppHelper::returnError([ 
-            "error" =>$authResult["error"] ?? []
+        return Helpers\AppHelper::returnError([ 
+            "error" => $authResult["error"] ?? []
         ]);
     }
 
     ["data" => ["sid" => $sid]] = $authResult;
 
-    //deleteToken uses AppHelper::returnSuccess
-    return DbHelper::deleteToken(["sid" => $sid]);
+    //deleteToken uses Helpers\AppHelper::returnSuccess
+    return Db\DbHelper::deleteToken(["sid" => $sid]);
   }
 
   /**
@@ -136,58 +136,58 @@ class AuthHelper {
     $token = $options["token"] ?? null;
 
     //select token
-    ["data"=>["items" => $items]] = DbHelper::selectActivateUserToken([
+    ["data"=>["items" => $items]] = Db\DbHelper::selectActivateUserToken([
         "token" => $token
     ]);
 
     if(count($items)<1){
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "Token not found",
             "code" => PATA_ERROR_ACTIVATE_TOKEN_NOTFOUND
         ]]);
     }
 
     if(count($items)>1){
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "Duplicated Token",
             "code" => PATA_ERROR_ACTIVATE_DUPLICATED_TOKEN
         ]]);
     }
     
-    ["result" => $hasExpired] = DateTimeHelper::hasExpired([
+    ["result" => $hasExpired] = Helpers\DateTimeHelper::hasExpired([
         "date"=> intval($items[0]->expiration)
     ]);
     if ($hasExpired) {
         if(intval($items[0]->expiration) === intval(PATA_TOKEN_EXPIRATION_VALUE)){
-            return AppHelper::returnError(["error"=>[
+            return Helpers\AppHelper::returnError(["error"=>[
                 "message" => "Token already used. Try to login.",
                 "code" => PATA_ERROR_ACTIVATE_TOKEN_USED
             ]]);
         }
 
         //error token expired, suggest to try login and press resend activation email
-        return AppHelper::returnError(["error"=>[
+        return Helpers\AppHelper::returnError(["error"=>[
             "message" => "Token Expired. Try to login and press the send activation email button",
             "code" => PATA_ERROR_ACTIVATE_TOKEN_EXPIRED
         ]]);
     }
 
     //ok activate user and return true
-    ["data"=>["queryResult" => $queryResult]] = DbHelper::updateUser([
+    ["data"=>["queryResult" => $queryResult]] = Db\DbHelper::updateUser([
         "data"=>["active"=>true], 
         "id"=>$items[0]->user_id
     ]);
 
-    ["data"=>["queryResult" => $queryResult]] = DbHelper::updateToken([
+    ["data"=>["queryResult" => $queryResult]] = Db\DbHelper::updateToken([
         "data"=>["expiration"=>PATA_TOKEN_EXPIRATION_VALUE], 
         "id"=>$items[0]->id
     ]);
     
     if($queryResult===1){
-        return AppHelper::returnSuccess(["data"=>["queryResult"=>$queryResult]]);
+        return Helpers\AppHelper::returnSuccess(["data"=>["queryResult"=>$queryResult]]);
     }
 
-    return AppHelper::returnError(["error"=>[
+    return Helpers\AppHelper::returnError(["error"=>[
         "message" => "Error updating token",
         "code" => PATA_ERROR_ACTIVATE_TOKEN_DB_ERROR
     ]]);
@@ -203,23 +203,23 @@ class AuthHelper {
 
     // 1. check if token is not empty
     if(!$accessToken){
-        return AppHelper::returnError([ "error" =>[
+        return Helpers\AppHelper::returnError([ "error" =>[
             "message" => "Access Token not valid",
             "code" => PATA_ERROR_AUTH_INVALID_TOKEN
         ]]);
     }
 
     // 2. check if token is found in db
-    ["data" => ["items" => $items]] = DbHelper::selectAccessToken(["token" => $accessToken]);
+    ["data" => ["items" => $items]] = Db\DbHelper::selectAccessToken(["token" => $accessToken]);
     if(count($items)<1){
-        return AppHelper::returnError([ "error" =>[
+        return Helpers\AppHelper::returnError([ "error" =>[
             "message" => "Access Token not found",
             "code" => PATA_ERROR_AUTH_TOKEN_NOT_FOUND
         ]]);
     }
     if(count($items)>1){
         //@todo send telegram
-        return AppHelper::returnError([ "error" =>[
+        return Helpers\AppHelper::returnError([ "error" =>[
             "message" => "Access Token duplicated",
             "code" => PATA_ERROR_AUTH_TOKEN_DUPLICATED
         ]]);
@@ -227,20 +227,20 @@ class AuthHelper {
 
     // 3. check if token is not expired
     if ($checkExpired) {
-        ["result" => $hasExpired] = DateTimeHelper::hasExpired([
+        ["result" => $hasExpired] = Helpers\DateTimeHelper::hasExpired([
             "date" => intval($items[0]->expiration)
         ]);
         if ($hasExpired) {
-            ["data" => ["queryResult" => $queryResult]] = DbHelper::deleteToken(["sid" => $items[0]->sid]);
+            ["data" => ["queryResult" => $queryResult]] = Db\DbHelper::deleteToken(["sid" => $items[0]->sid]);
 
-            return AppHelper::returnError(["error" => [
+            return Helpers\AppHelper::returnError(["error" => [
                 "message" => "Access Token expired",
                 "code" => PATA_ERROR_AUTH_TOKEN_EXPIRED
             ]]);
         }
     }
 
-    return AppHelper::returnSuccess(["data"=>["sid"=>$items[0]->sid]]);
+    return Helpers\AppHelper::returnSuccess(["data"=>["sid"=>$items[0]->sid]]);
   }
 
   
@@ -255,8 +255,8 @@ class AuthHelper {
 
     // 1. if refresh token exists
     // 2. if refresh token is valid
-    if(!ValidateHelper::refreshToken(["value"=>$refreshToken])){
-        return AppHelper::returnError([ 
+    if(!Helpers\ValidateHelper::refreshToken(["value"=>$refreshToken])){
+        return Helpers\AppHelper::returnError([ 
             "error" =>[
                 "message" => "Refresh Token not valid",
                 "code" => PATA_ERROR_REFRESH_TOKEN_INVALID
@@ -268,7 +268,7 @@ class AuthHelper {
     // 3. if access token is valid or expired
     $authResult = self::authenticate(["accessToken"=>$accessToken, "checkExpired"=>false]);
     if(!$authResult["result"]){
-        return AppHelper::returnError([ 
+        return Helpers\AppHelper::returnError([ 
             "error" =>$authResult["error"] ?? [],
             "customData" => ["responseCode" => 401]
         ]);
@@ -277,9 +277,9 @@ class AuthHelper {
     ["data" => ["sid" => $sid]] = $authResult ?? ["data"=>["sid"=>""]];
 
     // 4. if refresh token is found
-    ["data" => ["items" => $items]] = DbHelper::selectRefreshToken(["token" => $refreshToken]);
+    ["data" => ["items" => $items]] = Db\DbHelper::selectRefreshToken(["token" => $refreshToken]);
     if(count($items)<1){
-        return AppHelper::returnError([ 
+        return Helpers\AppHelper::returnError([ 
             "error" =>[
                 "message" => "Refresh Token not found",
                 "code" => PATA_ERROR_REFRESH_TOKEN_NOT_FOUND,
@@ -291,13 +291,13 @@ class AuthHelper {
     }
 
     // 5. if refresh token is not expired
-    ["result" => $hasExpired] = DateTimeHelper::hasExpired([
+    ["result" => $hasExpired] = Helpers\DateTimeHelper::hasExpired([
         "date" => intval($items[0]->expiration)
     ]);
     if ($hasExpired) {
-        ["data" => ["queryResult" => $queryResult]] = DbHelper::deleteToken(["sid" => $items[0]->sid]);
+        ["data" => ["queryResult" => $queryResult]] = Db\DbHelper::deleteToken(["sid" => $items[0]->sid]);
 
-        return AppHelper::returnError([
+        return Helpers\AppHelper::returnError([
             "error" => [
                 "message" => "Refresh Token expired",
                 "code" => PATA_ERROR_REFRESH_TOKEN_EXPIRED,
@@ -309,7 +309,7 @@ class AuthHelper {
 
     // 6. if refresh token and access tokena have same sid
     if($items[0]->sid !== $sid){
-        return AppHelper::returnError([ 
+        return Helpers\AppHelper::returnError([ 
             "error" =>[
                 "message" => "Refresh Token and Access Token have different sid",
                 "code" => PATA_ERROR_REFRESH_TOKEN_DIFFERENT_SID,
@@ -322,8 +322,8 @@ class AuthHelper {
 
     // also check for duplicate, should never happens
     if(count($items)>1){
-        // AppHelper::sendTelegram();
-        return AppHelper::returnError([ 
+        // Helpers\AppHelper::sendTelegram();
+        return Helpers\AppHelper::returnError([ 
             "error" =>[
                 "message" => "Access Token duplicated",
                 "code" => PATA_ERROR_REFRESH_TOKEN_DUPLICATED
@@ -333,7 +333,7 @@ class AuthHelper {
     }
 
     // 7. burn token and refresh token with same sid
-    ["data" => ["queryResult" => $deleteTokensResult]] = DbHelper::deleteToken(["sid" => $items[0]->sid]);
+    ["data" => ["queryResult" => $deleteTokensResult]] = Db\DbHelper::deleteToken(["sid" => $items[0]->sid]);
     
     // 8. generate new sdi, at, rt
     ["data"=>[
@@ -344,7 +344,7 @@ class AuthHelper {
         "tokenInsertResult"=>$tokenInsertResult,
     ]] = self::generateAndSaveUserTokens(["userId"=>$items[0]->user_id]);
 
-    return AppHelper::returnSuccess(["data"=>[
+    return Helpers\AppHelper::returnSuccess(["data"=>[
         "sid"=>$sid,
         "refreshToken"=>$refreshToken,
         "accessToken"=>$accessToken,
@@ -369,29 +369,29 @@ class AuthHelper {
     $sid = self::generateSid();
 
     //save on db
-    $created = DateTimeHelper::getMysqlUTC();
+    $created = Helpers\DateTimeHelper::getMysqlUTC();
     $baseInsert = ["created" => $created, "modified" => $created, "user_id" => $userId, "sid" => $sid];
-    ["data"=>["queryResult" => $tokenInsertResult]] = DbHelper::createToken(["data"=>[
+    ["data"=>["queryResult" => $tokenInsertResult]] = Db\DbHelper::createToken(["data"=>[
         $baseInsert + [
             "token" => $accessToken,
             "token_type" => PATA::$accessTokenName,
-            "expiration" => DateTimeHelper::getAccessTokenExpiration(["date"=>$created]),
+            "expiration" => Helpers\DateTimeHelper::getAccessTokenExpiration(["date"=>$created]),
         ],
         $baseInsert + [
             "token" => $refreshToken,
             "token_type" => PATA::$refreshTokenName,
-            "expiration" => DateTimeHelper::getRefreshTokenExpiration(),
+            "expiration" => Helpers\DateTimeHelper::getRefreshTokenExpiration(),
         ],
     ]]);
 
     // @todo DELETE FROM `users_app_tokens` ORDER BY `created_at` DESC limit ($numAccessToken-10)
-    // ["items" => $numAccessToken] = DbHelper::selectAccessToken(["count" => true, "userId" => $users[0]->id]);
+    // ["items" => $numAccessToken] = Db\DbHelper::selectAccessToken(["count" => true, "userId" => $users[0]->id]);
     // if($numAccessToken>10){}
 
     //send user refresh token in httpOnly,secure and path="/auth/refresh-token"
     ["result" => $setCookieRes] = self::setRefreshTokenCookie(["rt" => $refreshToken]);
 
-    return AppHelper::returnSuccess(["data"=>[
+    return Helpers\AppHelper::returnSuccess(["data"=>[
         "sid"=>$sid, 
         "refreshToken"=>$refreshToken, 
         "accessToken"=>$accessToken,
@@ -434,7 +434,7 @@ class AuthHelper {
 
       // this check is for phpunit
       if (headers_sent() !== false) {
-          return AppHelper::returnError();
+          return Helpers\AppHelper::returnError();
       }
 
       $res = setcookie(
@@ -448,9 +448,9 @@ class AuthHelper {
       );
 
       if($res){
-        AppHelper::returnSuccess();
+        Helpers\AppHelper::returnSuccess();
       }
 
-      AppHelper::returnError();
+      Helpers\AppHelper::returnError();
   }
 }
