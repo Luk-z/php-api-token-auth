@@ -1,6 +1,6 @@
 <?php
 
-namespace PATA;
+namespace PATA\Db;
 
 /**
  * DB Interface
@@ -8,7 +8,7 @@ namespace PATA;
  * It's recommended to use AppHelper::returnSuccess() and AppHelper::returnError() functions to return with right format.
  * See LumenDB.php as an example.
  */
-interface DB {
+interface DbInterface {
     /**
      * selectToken()
      * 
