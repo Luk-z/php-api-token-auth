@@ -2,7 +2,7 @@
 
 namespace PATA\Db;
 
-class LumenDB implements DB{
+class LumenDB implements DbInterface{
     public function selectToken(array $options = []) : array {
         $userId = $options["userId"] ?? null;
         $type = $options["type"] ?? null;
