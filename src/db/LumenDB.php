@@ -1,6 +1,6 @@
 <?php
 
-namespace PATA;
+namespace PATA\Db;
 
 class LumenDB implements DB{
     public function selectToken(array $options = []) : array {

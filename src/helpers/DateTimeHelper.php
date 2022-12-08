@@ -1,6 +1,6 @@
 <?php
 
-namespace PATA;
+namespace PATA\Helpers;
 
 class DateTimeHelper{
   public static function getMysqlUTC($options=[]){

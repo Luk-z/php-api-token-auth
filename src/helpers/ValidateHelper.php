@@ -1,6 +1,6 @@
 <?php
 
-namespace PATA;
+namespace PATA\Helpers;
 
 class ValidateHelper{
     //@todo do some smarter cheks

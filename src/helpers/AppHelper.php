@@ -1,6 +1,6 @@
 <?php
 
-namespace PATA;
+namespace PATA\Helpers;
 
 class AppHelper {
     public static function buildErrorData($options=[]){

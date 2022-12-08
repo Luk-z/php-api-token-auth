@@ -1,6 +1,6 @@
 <?php
 
-namespace PATA;
+namespace PATA\Security;
 
 class LumenHash implements Hash{
     public function hash(array $options = []) : string {
