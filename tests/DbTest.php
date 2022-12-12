@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use PATA\PATA;
-use PATA\Db\FakeDB;
+use PATA\Db\FakeDb;
 use PATA\Security\FakeHash;
 use PATA\Helpers\DbHelper;
 
@@ -30,10 +30,10 @@ final class DbTest extends TestCase{
     }
 
     static function initDb(){
-        //init two times else PATA::$usersTableName is not defined when FakeDB is istantiated
+        //init two times else PATA::$usersTableName is not defined when FakeDb is istantiated
         PATA::init();
         PATA::init([
-            "dbHandler" =>  new FakeDB(),
+            "dbHandler" =>  new FakeDb(),
             "hashHandler" =>  new FakeHash(),
         ]);
     }

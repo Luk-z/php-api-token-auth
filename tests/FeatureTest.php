@@ -2,7 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 use PATA\PATA;
-use PATA\Db\FakeDB;
 use PATA\Helpers\DbHelper;
 
 final class FeatureTest extends TestCase{

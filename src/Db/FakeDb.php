@@ -19,7 +19,7 @@ use PATA\Helpers\AppHelper;
  *      ],
  *  ]
  */
-class FakeDB implements DbInterface{
+class FakeDb implements DbInterface{
     private static $data = [];
 
     function __construct() {
