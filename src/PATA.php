@@ -2,6 +2,12 @@
 
 namespace PATA;
 
+use PATA\Helpers\DbHelper;
+use PATA\Helpers\HashHelper;
+use PATA\Helpers\AuthHelper;
+use PATA\Security\LumenHash;
+use PATA\Db\LumenDB;
+
 require_once 'constants.php';
 
 /**
@@ -22,18 +28,18 @@ class PATA {
    * Initialize the library passing dome configuration information.
    */
   public static function init($options = []){
-    self::$usersTableName = $options["usersTableName"] ?? '';
-    self::$userTokensTableName = $options["userTokensTableName"] ?? '';
-    self::$accessTokenName = $options["accessTokenName"] ?? 'at';
-    self::$refreshTokenName = $options["refreshTokenName"] ?? 'rt';
-    self::$activateTokenName = $options["activateTokenName"] ?? 'act';
-    self::$cookieRefreshTokenName = $options["cookieRefreshTokenName"] ?? 'rn_rt';
-    self::$endpointRefreshToken = $options["endpointRefreshToken"] ?? '/auth/refresh-token';
-    self::$domainRefreshToken = $options["domainRefreshToken"] ?? 'api-develop.ronchesisrl.it';
+    self::$usersTableName = $options["usersTableName"] ?? PATA_DEFAULT_USERS_TABLE_NAME;
+    self::$userTokensTableName = $options["userTokensTableName"] ?? PATA_DEFAULT_TOKENS_TABLE_NAME;
+    self::$accessTokenName = $options["accessTokenName"] ?? PATA_DEFAULT_ACCESS_TOKEN;
+    self::$refreshTokenName = $options["refreshTokenName"] ?? PATA_DEFAULT_REFRESH_TOKEN;
+    self::$activateTokenName = $options["activateTokenName"] ?? PATA_DEFAULT_ACTIVATE_TOKEN;
+    self::$cookieRefreshTokenName = $options["cookieRefreshTokenName"] ?? PATA_DEFAULT_COOKIE_REFRESH_TOKEN_NAME;
+    self::$endpointRefreshToken = $options["endpointRefreshToken"] ?? PATA_DEFAULT_ENDPOINT_REFRESH_TOKEN;
+    self::$domainRefreshToken = $options["domainRefreshToken"] ?? PATA_DEFAULT_DOMAIN_REFRESH_TOKEN;
 
     if(!isset($options["dbHandler"])){
       // require_once PATA_DB_PATH.'/LumenDB.php';
-      $dbHandler = new Db\LumenDB();
+      $dbHandler = new LumenDB();
     }
     else{
       $dbHandler = $options["dbHandler"];
@@ -42,7 +48,7 @@ class PATA {
 
     if(!isset($options["hashHandler"])){
       // require_once PATA_SECURITY_PATH.'/LumenHash.php';
-      $hashHandler = new Security\LumenHash();
+      $hashHandler = new LumenHash();
     }
     else{
       $hashHandler = $options["hashHandler"];
@@ -55,7 +61,7 @@ class PATA {
    * Take an access token and check if is valid/not expired
    */
   public static function authenticate($options = []){
-    return Helpers\AuthHelper::authenticate($options);
+    return AuthHelper::authenticate($options);
   }
 
   /**
@@ -66,7 +72,7 @@ class PATA {
   static function refreshToken($options=[]){
     $refreshToken = $options["refreshToken"] ?? $_COOKIE[PATA::$cookieRefreshTokenName] ?? "";
     $options["refreshToken"] = $refreshToken;
-    return Helpers\AuthHelper::refreshToken($options);
+    return AuthHelper::refreshToken($options);
   }
 
   /**
@@ -74,7 +80,7 @@ class PATA {
    * Searches provided activation token and check validity then set user activated and set activation token expired
    */
   static function activate($options=[]){
-    return Helpers\AuthHelper::activate($options);
+    return AuthHelper::activate($options);
   }
 
   /**
@@ -82,7 +88,7 @@ class PATA {
    * Creates a user with given email and password then send activation email. If user already exists.
    */
   static function registerUser($options=[]){
-    return Helpers\AuthHelper::registerUser($options);
+    return AuthHelper::registerUser($options);
   }
 
   /**
@@ -90,7 +96,7 @@ class PATA {
    * Check provided credentials then create a user session with refresh token, access token and session id. If provided credentials are wrong or usr isn't activated return an error
    */
   static function loginUser($options=[]){
-    return Helpers\AuthHelper::loginUser($options);
+    return AuthHelper::loginUser($options);
   }
 
   /**
@@ -98,6 +104,6 @@ class PATA {
    * First executes authenticate() to check accessToken then delete user tokens associated to a specific sid
    */
   static function logoutUser($options=[]){
-    return Helpers\AuthHelper::logoutUser($options);
+    return AuthHelper::logoutUser($options);
   }
 }

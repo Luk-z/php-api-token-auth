@@ -1,6 +1,7 @@
 <?php
 
 namespace PATA\Helpers;
+use PATA\PATA;
 
 class DbHelper {
 

@@ -25,7 +25,7 @@ interface DbInterface {
     /**
      * createToken()
      * 
-     * @param array options['data'] - user data
+     * @param array options['data'] - token data
      * @param string options['data']['created'] - date time in mysql format 'Y-m-d H:i:s'
      * @param string options['data']['modified'] - date time in mysql format 'Y-m-d H:i:s'
      * @param int options['data']['user_id'] - 
@@ -78,10 +78,10 @@ interface DbInterface {
     /**
      * createUser()
      * 
-     * @param string options['created'] -
-     * @param string options['email'] -
-     * @param string options['password'] - 
-     * @param bool options['active'] - 
+     * @param string options['data']['created'] -
+     * @param string options['data']['email'] -
+     * @param string options['data']['password'] - 
+     * @param bool options['data']['active'] - 
      * 
      * @return array ["success"=>bool, "data"=>["items"=> [...]]]
      */

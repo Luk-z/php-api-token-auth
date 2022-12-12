@@ -23,5 +23,17 @@ class ValidateHelper{
 
       return !!$value;
     }
+
+    static function email($options=[]){
+      $value = $options["value"] ?? "";
+
+      return !!filter_var($value, FILTER_VALIDATE_EMAIL);
+    }
+
+    static function password($options=[]){
+      $value = $options["value"] ?? "";
+
+      return !!preg_match(PATA_REGEX_PASSWORD, $value);
+    }
 }
 
