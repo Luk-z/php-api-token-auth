@@ -2,6 +2,9 @@
 
 namespace PATA\Db;
 
+use PATA\PATA;
+use PATA\Helpers\AppHelper;
+
 class LumenDB implements DbInterface{
     public function selectToken(array $options = []) : array {
         $userId = $options["userId"] ?? null;
@@ -35,7 +38,7 @@ class LumenDB implements DbInterface{
             $items = $query->get();
         }
     
-        return Helpers\AppHelper::returnSuccess(["data"=>["items"=>$items]]);
+        return AppHelper::returnSuccess(["data"=>["items"=>$items]]);
     }
 
     public function createToken(array $options = []) : array {
@@ -43,7 +46,7 @@ class LumenDB implements DbInterface{
 
         $queryResult = app('db')->table(PATA::$userTokensTableName)->insert($data);
 
-        return Helpers\AppHelper::returnSuccess(["data"=>["queryResult"=>$queryResult]]);
+        return AppHelper::returnSuccess(["data"=>["queryResult"=>$queryResult]]);
     }
 
     public function updateToken(array $options = []) : array {
@@ -78,7 +81,7 @@ class LumenDB implements DbInterface{
 
         $affected = $query->update($data);
 
-        return Helpers\AppHelper::returnSuccess(["data"=>["queryResult"=>$affected]]);
+        return AppHelper::returnSuccess(["data"=>["queryResult"=>$affected]]);
     }
 
     public function deleteToken(array $options = []) : array {
@@ -107,7 +110,7 @@ class LumenDB implements DbInterface{
 
         $affected = $query->delete();
 
-        return Helpers\AppHelper::returnSuccess(["data" => ["queryResult" => $affected]]);
+        return AppHelper::returnSuccess(["data" => ["queryResult" => $affected]]);
     }
 
     public function createUser(array $options = []) : array {
@@ -117,7 +120,7 @@ class LumenDB implements DbInterface{
         $active = $options["active"] ?? null;
 
         if($created===null || $email===null || $password===null || $active===null){
-            return Helpers\AppHelper::returnError(["error"=>[
+            return AppHelper::returnError(["error"=>[
                 "message" => "data not valid",
             ]]);
         }
@@ -135,7 +138,7 @@ class LumenDB implements DbInterface{
             "modified" => $created,
         ]);
 
-        return Helpers\AppHelper::returnSuccess(["data" => ["id" => $id]]);
+        return AppHelper::returnSuccess(["data" => ["id" => $id]]);
     }
 
     public function updateUser(array $options = []) : array {
@@ -150,7 +153,7 @@ class LumenDB implements DbInterface{
 
         $affected = $query->update($data);
 
-        return Helpers\AppHelper::returnSuccess(["data" => ["queryResult" => $affected]]);
+        return AppHelper::returnSuccess(["data" => ["queryResult" => $affected]]);
     }
     
     public function selectUser(array $options = []) : array {
@@ -174,6 +177,6 @@ class LumenDB implements DbInterface{
 
         $items = $query->get();
 
-        return Helpers\AppHelper::returnSuccess(["data" => ["items" => $items]]);
+        return AppHelper::returnSuccess(["data" => ["items" => $items]]);
     }
 }
