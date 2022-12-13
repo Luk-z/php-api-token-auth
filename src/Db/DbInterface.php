@@ -12,11 +12,11 @@ interface DbInterface {
     /**
      * selectToken()
      * 
-     * @param int options['userId']
-     * @param string options['type']
-     * @param int options['count']
-     * @param string options['token']
-     * @param string options['sid']
+     * @param int options['userId'] - filter by user id
+     * @param string options['type'] - filter by type
+     * @param int options['count'] - if true return items count nuimber instead items array. Default to false.
+     * @param string options['token'] - filter by token
+     * @param string options['sid'] - filter by sid
      * 
      * @return array ["success"=>bool, "data"=>["items"=>[["id"=>".."], ["id"=>".."]]]]
      */
@@ -28,10 +28,10 @@ interface DbInterface {
      * @param array options['data'] - token data
      * @param string options['data']['created'] - date time in mysql format 'Y-m-d H:i:s'
      * @param string options['data']['modified'] - date time in mysql format 'Y-m-d H:i:s'
-     * @param int options['data']['user_id'] - 
-     * @param string options['data']['sid'] - 
-     * @param string options['data']['token'] - 
-     * @param string options['data']['token_type'] - 
+     * @param int options['data']['user_id'] - user associated to this token
+     * @param string options['data']['sid'] - session id
+     * @param string options['data']['token'] - token string
+     * @param string options['data']['token_type'] - the type of token (eg. access token, refresh, token, etc..)
      * @param string options['data']['expiration'] - UTC timestamp
      * 
      * @return array ["success"=>bool, "data"=>["queryResult"=>bool]] // queryResult = whether the data is inserted or not
@@ -41,12 +41,12 @@ interface DbInterface {
     /**
      * updateToken()
      * 
-     * @param array options['data'] - user data
-     * @param int options['id'] - 
-     * @param string options['token'] - 
-     * @param int options['userId'] - 
-     * @param string options['sid'] - 
-     * @param string options['type'] - 
+     * @param array options['data'] - user data to update
+     * @param int options['id'] - filtered id to update
+     * @param string options['token'] - filtered token to update
+     * @param int options['userId'] - filtered userId to update
+     * @param string options['sid'] - filtered sid to update
+     * @param string options['type'] - filtered type to update
      * 
      * @return array ["success"=>bool, "data"=>["queryResult"=>int]] // queryResult = affected rows
      */
@@ -78,10 +78,10 @@ interface DbInterface {
     /**
      * createUser()
      * 
-     * @param string options['data']['created'] -
-     * @param string options['data']['email'] -
-     * @param string options['data']['password'] - 
-     * @param bool options['data']['active'] - 
+     * @param string options['data']['created'] - date time in mysql format 'Y-m-d H:i:s'
+     * @param string options['data']['email'] - user email
+     * @param string options['data']['password'] - password
+     * @param bool options['data']['active'] - accepted values: "0" | false | 0 | "1" | true | 1 - flag indicating the user is active or must confirm the email.
      * 
      * @return array ["success"=>bool, "data"=>["items"=> [...]]]
      */
@@ -90,7 +90,7 @@ interface DbInterface {
     /**
      * updateUser()
      * 
-     * @param array options['data'] -user data, see createUser() for valid fields
+     * @param array options['data'] - user data, see createUser() for valid fields
      * @param string options['id'] - id of the user to update
      * 
      * @return array ["success"=>bool, "data"=>["items"=> [...]]]

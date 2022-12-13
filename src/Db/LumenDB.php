@@ -114,10 +114,11 @@ class LumenDB implements DbInterface{
     }
 
     public function createUser(array $options = []) : array {
-        $created = $options["created"] ?? null;
-        $email = $options["email"] ?? null;
-        $password = $options["password"] ?? null;
-        $active = $options["active"] ?? null;
+        $data = $options["data"] ?? [];
+        $created = $data["created"] ?? null;
+        $email = $data["email"] ?? null;
+        $password = $data["password"] ?? null;
+        $active = $data["active"] ?? null;
 
         if($created===null || $email===null || $password===null || $active===null){
             return AppHelper::returnError(["error"=>[
