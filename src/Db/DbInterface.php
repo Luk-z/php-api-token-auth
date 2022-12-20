@@ -67,6 +67,7 @@ interface DbInterface {
     /**
      * selectUser()
      * 
+     * @param string options['id'] -
      * @param string options['email'] -
      * @param string options['password'] - 
      * @param bool options['active'] - 

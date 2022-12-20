@@ -161,6 +161,7 @@ class LumenDB implements DbInterface{
         $email = $options["email"] ?? null;
         $password = $options["password"] ?? null;
         $active = $options["active"] ?? null;
+        $id = $options["id"] ?? null;
 
         $query = app('db')->table(PATA::$usersTableName)->select("*");
 
@@ -174,6 +175,10 @@ class LumenDB implements DbInterface{
 
         if($active !== null){
             $query->where("active", "=", $active);
+        }
+
+        if($id !== null){
+            $query->where("id", "=", intval($id));
         }
 
         $items = $query->get();

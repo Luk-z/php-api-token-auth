@@ -274,6 +274,7 @@ class FakeDb implements DbInterface{
         $email = $options["email"] ?? null;
         $password = $options["password"] ?? null;
         $active = $options["active"] ?? null;
+        $id = $options["id"] ?? null;
 
         $rows = self::$data[PATA::$usersTableName];
 
@@ -292,6 +293,12 @@ class FakeDb implements DbInterface{
         if($active !== null){
             $rows = self::filterByValue([
                 "items"=>$rows, "key"=>"active", "value"=>$active
+            ]);
+        }
+
+        if($id !== null){
+            $rows = self::filterByValue([
+                "items"=>$rows, "key"=>"id", "value"=>$id
             ]);
         }
 
