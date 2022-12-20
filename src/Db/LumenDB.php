@@ -178,7 +178,7 @@ class LumenDB implements DbInterface{
         }
 
         if($id !== null){
-            $query->where("id", "=", intval($id));
+            $query->where("ID", "=", intval($id));
         }
 
         $items = $query->get();
