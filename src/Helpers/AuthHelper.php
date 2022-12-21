@@ -302,7 +302,7 @@ class AuthHelper {
         ]]);
     }
 
-    return AppHelper::returnSuccess(["data"=>["id"=>$id, "shouldSendEmail" => true]]);
+    return AppHelper::returnSuccess(["data"=>["id"=>$id, "shouldSendActivationEmail" => true]]);
   }
 
   /**
