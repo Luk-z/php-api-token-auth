@@ -294,8 +294,6 @@ class AuthHelper {
         "expiration" => DateTimeHelper::getAccessTokenExpiration(["date"=>$created]),
     ]]);
 
-    //@todo send email
-
     if(!$result){
         return AppHelper::returnError(["error"=>[
             "message" => $message,
@@ -304,7 +302,7 @@ class AuthHelper {
         ]]);
     }
 
-    return AppHelper::returnSuccess(["data"=>["id"=>$id, "emailSent" => true]]);
+    return AppHelper::returnSuccess(["data"=>["id"=>$id, "shouldSendEmail" => true]]);
   }
 
   /**

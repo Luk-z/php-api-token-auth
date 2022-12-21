@@ -176,7 +176,7 @@ Returns:
     "result" => true,
     "data" => [
         "id" => int, // userId
-        "emailSent" => bool, // whether the activation email is sent succesfully
+        "shouldSendActivationEmail" => bool, // whether an activation email should be sent
     ]
 ]
 ```

@@ -209,7 +209,7 @@ final class FeatureTest extends TestCase{
 
         $res = PATA::registerUser(["email" => "test.registration1@test.it", "password" => "Test123!"]);
         $this->assertEquals($res["result"], true);
-        $this->assertEquals($res["data"]["emailSent"], true);
+        $this->assertEquals($res["data"]["shouldSendActivationEmail"], true);
         $this->assertEquals($res["data"]["id"]>0, true);
 
         $registeredId = $res["data"]["id"];
