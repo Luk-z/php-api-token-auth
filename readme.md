@@ -177,6 +177,7 @@ Returns:
     "data" => [
         "id" => int, // userId
         "shouldSendActivationEmail" => bool, // whether an activation email should be sent
+        "activationToken" => "xxxxx", // user token for account activation
     ]
 ]
 ```

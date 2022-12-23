@@ -284,12 +284,14 @@ class AuthHelper {
         "active" => "0",
     ]]) + ["data"=>["id"=>""], "error"=>["message"=>"Error Inserting User in DB"]];
 
+    $activationToken = AuthHelper::generateActivateAccountToken();
+
     ["data"=>["queryResult" => $tokenInsertResult]] = DbHelper::createToken(["data"=>[
         "created" => $created, 
         "modified" => $created, 
         "user_id" => $id, 
         "sid" => "",
-        "token" => AuthHelper::generateActivateAccountToken(),
+        "token" => $activationToken,
         "token_type" => PATA::$activateTokenName,
         "expiration" => DateTimeHelper::getAccessTokenExpiration(["date"=>$created]),
     ]]);
@@ -302,7 +304,11 @@ class AuthHelper {
         ]]);
     }
 
-    return AppHelper::returnSuccess(["data"=>["id"=>$id, "shouldSendActivationEmail" => true]]);
+    return AppHelper::returnSuccess(["data"=>[
+        "id"=>$id, 
+        "shouldSendActivationEmail" => true,
+        "activationToken" => $activationToken,
+    ]]);
   }
 
   /**

@@ -211,6 +211,7 @@ final class FeatureTest extends TestCase{
         $this->assertEquals($res["result"], true);
         $this->assertEquals($res["data"]["shouldSendActivationEmail"], true);
         $this->assertEquals($res["data"]["id"]>0, true);
+        $this->assertEquals(!!$res["data"]["activationToken"], true);
 
         $registeredId = $res["data"]["id"];
 
