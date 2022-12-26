@@ -6,8 +6,7 @@ This library is based on https://www.yiiframework.com/wiki/2568/jwt-authenticati
 
 - https://phpstan.org/ see https://github.com/firebase/php-jwt/blob/main/.github/workflows/tests.yml
 - changelog
-- unit test
-- .editorconfig https://github.com/kreait/firebase-php
+- .editorconfig https://github.com/kreait/firebase-php https://github.com/cakephp/cakephp
 
 ## Release
 
