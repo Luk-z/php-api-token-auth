@@ -8,6 +8,10 @@ This library is based on https://www.yiiframework.com/wiki/2568/jwt-authenticati
 - changelog
 - .editorconfig https://github.com/kreait/firebase-php https://github.com/cakephp/cakephp
 
+## PHP CS Fixer
+
+To use correctly PHP CS Fixer copy `settings.json-example` to `settings.json` and insert absolute path of `tools/php-cs-fixer/vendor/bin/php-cs-fixer` to `php-cs-fixer.executablePath`
+
 ## Release
 
 Repository is linked to packagist through (github web hook)[https://packagist.org/about#how-to-update-packages]. To push an update simply push a tag.

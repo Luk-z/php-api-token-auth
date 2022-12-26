@@ -5,8 +5,10 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "junstyle.php-cs-fixer"
   },
-  "php-cs-fixer.executablePath": "/Users/lucaziliani/code/ronchesi/php-api-token-auth/tools/php-cs-fixer/vendor/bin/php-cs-fixer",
-  "php-cs-fixer.executablePathWindows": "../tools/php-cs-fixer/vendor/bin/php-cs-fixer",
+  // put your absolute path to tools folder eg. /Users/{username}/code/php-api-token-auth/tools/php-cs-fixer/vendor/bin/php-cs-fixer
+  "php-cs-fixer.executablePath": "../tools/php-cs-fixer/vendor/bin/php-cs-fixer", 
+  // Windows only: put your absolute path to tools folder
+  "php-cs-fixer.executablePathWindows": "../tools/php-cs-fixer/vendor/bin/php-cs-fixer", 
   "php-cs-fixer.onsave": true,
   "php-cs-fixer.rules": "@PSR2",
   "php-cs-fixer.config": "../.php-cs-fixer.dist.php",
