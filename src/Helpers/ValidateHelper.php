@@ -1,39 +1,37 @@
 <?php
-
 namespace PATA\Helpers;
 
-class ValidateHelper{
+class ValidateHelper {
     //@todo do some smarter cheks
-    static function refreshToken($options=[]){
-      $value = $options["value"] ?? "";
+    public static function refreshToken($options = []) {
+        $value = $options['value'] ?? '';
 
-      return !!$value;
-    }
-
-    //@todo do some smarter cheks
-    static function accessToken($options=[]){
-      $value = $options["value"] ?? "";
-
-      return !!$value;
+        return !!$value;
     }
 
     //@todo do some smarter cheks
-    static function sidToken($options=[]){
-      $value = $options["value"] ?? "";
+    public static function accessToken($options = []) {
+        $value = $options['value'] ?? '';
 
-      return !!$value;
+        return !!$value;
     }
 
-    static function email($options=[]){
-      $value = $options["value"] ?? "";
+    //@todo do some smarter cheks
+    public static function sidToken($options = []) {
+        $value = $options['value'] ?? '';
 
-      return !!filter_var($value, FILTER_VALIDATE_EMAIL);
+        return !!$value;
     }
 
-    static function password($options=[]){
-      $value = $options["value"] ?? "";
+    public static function email($options = []) {
+        $value = $options['value'] ?? '';
 
-      return !!preg_match(PATA_REGEX_PASSWORD, $value);
+        return !!filter_var($value, FILTER_VALIDATE_EMAIL);
+    }
+
+    public static function password($options = []) {
+        $value = $options['value'] ?? '';
+
+        return !!preg_match(PATA_REGEX_PASSWORD, $value);
     }
 }
-

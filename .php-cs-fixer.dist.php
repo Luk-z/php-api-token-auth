@@ -6,7 +6,7 @@ return (new PhpCsFixer\Config())
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
         'combine_consecutive_unsets' => true,
-        'class_attributes_separation' => ['elements' => ['method' => 'one',]],
+        'class_attributes_separation' => ['elements' => ['method' => 'one', ]],
         'multiline_whitespace_before_semicolons' => false,
         'single_quote' => true,
 
@@ -20,6 +20,7 @@ return (new PhpCsFixer\Config())
         // 'blank_line_before_statement' => true,
         'braces' => [
             'allow_single_line_closure' => true,
+            'position_after_functions_and_oop_constructs' => 'same'
         ],
         // 'cast_spaces' => true,
         // 'class_definition' => array('singleLine' => true),
@@ -95,38 +96,8 @@ return (new PhpCsFixer\Config())
         'unary_operator_spaces' => true,
         'whitespace_after_comma_in_array' => true,
         'space_after_semicolon' => true,
-        // 'single_blank_line_at_eof' => false
+        // 'single_blank_line_at_eof' => false,
     ])
     // ->setIndent("\t")
     ->setLineEnding("\n")
 ;
-
-// https://github.com/kreait/firebase-php/blob/7.x/.php-cs-fixer.dist.php
-// declare(strict_types=1);
-
-// use Beste\PhpCsFixer\Config\RuleSet\Php81;
-// use Ergebnis\PhpCsFixer\Config;
-
-// $config = Config\Factory::fromRuleSet(new Php81(), [
-//     'phpdoc_line_span' => false,
-//     'concat_space' => [
-//         'spacing' => 'none',
-//     ],
-//     'final_class' => false,
-//     'final_internal_class' => false,
-//     'final_public_method_for_abstract_class' => false,
-//     'global_namespace_import' => [
-//         'import_classes' => true,
-//         'import_constants' => true,
-//         'import_functions' => true,
-//     ],
-//     'php_unit_test_case_static_method_calls' => [
-//         'call_type' => 'this',
-//     ],
-// ]);
-
-// $config->getFinder()->in(__DIR__);
-
-// $config->setCacheFile(__DIR__ . '/tools/.php-cs-fixer.cache');
-
-// return $config;

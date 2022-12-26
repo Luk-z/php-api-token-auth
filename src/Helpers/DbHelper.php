@@ -1,78 +1,76 @@
 <?php
-
 namespace PATA\Helpers;
+
 use PATA\PATA;
 
 class DbHelper {
+    private static $db = null;
 
-  private static $db = null;
+    public static function init($options = []) {
+        $handler = $options['handler'] ?? false;
 
-  public static function init($options = []){
-    $handler = $options["handler"] ?? false;
-
-    if($handler){
-	    self::$db = $handler;
+        if ($handler) {
+            self::$db = $handler;
+        }
     }
-  }
 
-  // to use outside this class
-  public static function getInstance(){
-    if(!self::$db){
-        //die bruttaly
-        die("PATA/DbHelper::getInstance db not setted. DbHelper::init(['handler'=>your_db_handle]) must be called.");
+    // to use outside this class
+    public static function getInstance() {
+        if (!self::$db) {
+            //die bruttaly
+            die("PATA/DbHelper::getInstance db not setted. DbHelper::init(['handler'=>your_db_handle]) must be called.");
+        }
+        return self::$db;
     }
-	  return self::$db;
-  }
 
-  /**
-   * TOKEN
-   */
+    /**
+     * TOKEN
+     */
+    public static function selectActivateUserToken($options = []) {
+        //@todo maybe cache value
+        return self::selectToken($options + ['type' => PATA::$activateTokenName]);
+    }
 
-  static function selectActivateUserToken($options=[]){
-      //@todo maybe cache value
-      return self::selectToken($options + ["type" => PATA::$activateTokenName]);
-  }
+    public static function selectAccessToken($options = []) {
+        //@todo maybe cache value
+        return self::selectToken($options + ['type' => PATA::$accessTokenName]);
+    }
 
-  public static function selectAccessToken($options=[]){
-    //@todo maybe cache value
-    return self::selectToken($options + ["type" => PATA::$accessTokenName]);
-  }
+    public static function selectRefreshToken($options = []) {
+        //@todo maybe cache value
+        return self::selectToken($options + ['type' => PATA::$refreshTokenName]);
+    }
 
-  static function selectRefreshToken($options=[]){
-    //@todo maybe cache value
-    return self::selectToken($options + ["type" => PATA::$refreshTokenName]);
-  }
+    public static function selectToken($options = []) {
+        return self::$db->selectToken($options);
+    }
 
-  static function selectToken($options=[]){
-    return self::$db->selectToken($options);
-  }
+    public static function createToken($options = []) {
+        return self::$db->createToken($options);
+    }
 
-  static function createToken($options=[]){
-    return self::$db->createToken($options);
-  }
+    public static function updateToken($options = []) {
+        return self::$db->updateToken($options);
+    }
 
-  static function updateToken($options=[]){
-    return self::$db->updateToken($options);
-  }
+    public static function deleteToken($options = []) {
+        return self::$db->deleteToken($options);
+    }
 
-  static function deleteToken($options=[]){
-    return self::$db->deleteToken($options);
-  }
+    /**
+     * USER
+     */
 
-  /**
-   * USER
-   */
+    //create user
+    public static function createUser($options = []) {
+        return self::$db->createUser($options);
+    }
 
-  //create user
-  static function createUser($options=[]){
-    return self::$db->createUser($options);
-  }
+    public static function updateUser($options = []) {
+        return self::$db->updateUser($options);
+    }
 
-  static function updateUser($options=[]){
-    return self::$db->updateUser($options);
-  }
-
-  static function selectUser($options=[]){
-    return self::$db->selectUser($options);
-  }
+    public static function selectUser($options = []) {
+        return self::$db->selectUser($options);
+    }
 }

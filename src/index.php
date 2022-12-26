@@ -1,5 +1,6 @@
-<?php 
-/** 
+<?php
+
+/**
  * This library was inspired by https://www.yiiframework.com/wiki/2568/jwt-authentication-tutorial
  * DOCS:
  * - try to use app('db') from Lumen
