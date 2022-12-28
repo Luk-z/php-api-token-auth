@@ -55,7 +55,6 @@ class AuthHelper {
         return AppHelper::returnSuccess(['data' => [
             'sid' => $items[0]->sid,
             'userId' => $items[0]->user_id,
-            'userData' => (array) $items[0]
         ]]);
     }
 
