@@ -119,6 +119,8 @@ final class FeatureTest extends TestCase {
         $res = PATA::authenticate(['accessToken' => 'token2']);
         $this->assertEquals($res['result'], true);
         $this->assertEquals($res['data']['sid'], 'sid2');
+        $this->assertEquals($res['data']['userId'], '1');
+        $this->assertEquals(!!$res['data']['userData'], true);
 
         $res = PATA::authenticate(['accessToken' => 'token4']);
         $this->assertEquals($res['result'], false);
