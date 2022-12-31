@@ -5,6 +5,14 @@ use PATA\PATA;
 use PATA\Helpers\AppHelper;
 
 class LumenDB implements DbInterface {
+    public static $usersTableName;
+    public static $userTokensTableName;
+
+    public function __construct($options = []) {
+        self::$usersTableName = $options['usersTableName'] ?? PATA_DEFAULT_USERS_TABLE_NAME;
+        self::$userTokensTableName = $options['userTokensTableName'] ?? PATA_DEFAULT_TOKENS_TABLE_NAME;
+    }
+
     public function selectToken(array $options = []): array {
         $userId = $options['userId'] ?? null;
         $type = $options['type'] ?? null;
@@ -12,7 +20,7 @@ class LumenDB implements DbInterface {
         $token = $options['token'] ?? null;
         $sid = $options['sid'] ?? null;
 
-        $query = app('db')->table(PATA::$userTokensTableName)->select('*');
+        $query = app('db')->table(self::$userTokensTableName)->select('*');
 
         if ($userId !== null) {
             $query->where('user_id', '=', $userId);
@@ -42,7 +50,7 @@ class LumenDB implements DbInterface {
     public function createToken(array $options = []): array {
         $data = $options['data'] ?? [];
 
-        $queryResult = app('db')->table(PATA::$userTokensTableName)->insert($data);
+        $queryResult = app('db')->table(self::$userTokensTableName)->insert($data);
 
         return AppHelper::returnSuccess(['data' => ['queryResult' => $queryResult]]);
     }
@@ -55,7 +63,7 @@ class LumenDB implements DbInterface {
         $sid = $options['sid'] ?? null;
         $type = $options['type'] ?? null;
 
-        $query = app('db')->table(PATA::$userTokensTableName);
+        $query = app('db')->table(self::$userTokensTableName);
 
         if ($id !== null) {
             $query->where('id', '=', $id);
@@ -88,7 +96,7 @@ class LumenDB implements DbInterface {
         $sid = $options['sid'] ?? null;
         $userId = $options['userId'] ?? null;
 
-        $query = app('db')->table(PATA::$userTokensTableName);
+        $query = app('db')->table(self::$userTokensTableName);
 
         if ($id !== null) {
             $query->where('id', '=', $id);
@@ -125,11 +133,11 @@ class LumenDB implements DbInterface {
         }
 
         // app('db')->insert(
-        //     "INSERT INTO ".PATA::$usersTableName." (created, email, password, active) VALUES ( ?, ?, ?, ?)",
+        //     "INSERT INTO ".self::$usersTableName." (created, email, password, active) VALUES ( ?, ?, ?, ?)",
         //     [$created, $email, $password, $active]
         // );
 
-        $id = app('db')->table(PATA::$usersTableName)->insertGetId([
+        $id = app('db')->table(self::$usersTableName)->insertGetId([
             'created' => $created,
             'email' => $email,
             'password' => $password,
@@ -144,7 +152,7 @@ class LumenDB implements DbInterface {
         $data = $options['data'] ?? [];
         $id = $options['id'] ?? null;
 
-        $query = app('db')->table(PATA::$usersTableName);
+        $query = app('db')->table(self::$usersTableName);
 
         if ($id !== null) {
             $query->where('id', '=', $id);
@@ -161,7 +169,7 @@ class LumenDB implements DbInterface {
         $active = $options['active'] ?? null;
         $id = $options['id'] ?? null;
 
-        $query = app('db')->table(PATA::$usersTableName)->select('*');
+        $query = app('db')->table(self::$usersTableName)->select('*');
 
         if ($email !== null) {
             $query->where('email', '=', $email);

@@ -30,7 +30,7 @@ final class DbTest extends TestCase {
     }
 
     public static function initDb() {
-        //init two times else PATA::$usersTableName is not defined when FakeDb is istantiated
+        //init two times else $usersTableName is not defined when FakeDb is istantiated
         PATA::init();
         PATA::init([
             'dbHandler' => new FakeDb(),

@@ -20,10 +20,12 @@ use PATA\Helpers\AppHelper;
  */
 class FakeDb implements DbInterface {
     private static $data = [];
+    private static $usersTableName = 'users';
+    private static $userTokensTableName = 'tokens';
 
     public function __construct() {
-        self::$data[PATA::$userTokensTableName] = [];
-        self::$data[PATA::$usersTableName] = [];
+        self::$data[self::$userTokensTableName] = [];
+        self::$data[self::$usersTableName] = [];
     }
 
     public static function delete(array $options = []): void {
@@ -72,7 +74,7 @@ class FakeDb implements DbInterface {
         $token = $options['token'] ?? null;
         $sid = $options['sid'] ?? null;
 
-        $rows = self::$data[PATA::$userTokensTableName];
+        $rows = self::$data[self::$userTokensTableName];
 
         if ($userId !== null) {
             $rows = self::filterByValue([
@@ -121,7 +123,7 @@ class FakeDb implements DbInterface {
             }
             $queryResult = count($data);
         } else {
-            $newId = count(self::$data[PATA::$userTokensTableName]) + 1;
+            $newId = count(self::$data[self::$userTokensTableName]) + 1;
 
             if (is_array($data)) {
                 $data = (object)$data;
@@ -129,7 +131,7 @@ class FakeDb implements DbInterface {
 
             $data->id = $newId;
 
-            self::$data[PATA::$userTokensTableName][] = $data;
+            self::$data[self::$userTokensTableName][] = $data;
             $queryResult = 1;
         }
 
@@ -144,7 +146,7 @@ class FakeDb implements DbInterface {
         $sid = $options['sid'] ?? null;
         $type = $options['type'] ?? null;
 
-        $rows = self::$data[PATA::$userTokensTableName];
+        $rows = self::$data[self::$userTokensTableName];
 
         if ($id !== null) {
             $rows = self::filterByValue([
@@ -177,7 +179,7 @@ class FakeDb implements DbInterface {
         }
 
         self::update([
-            'rows' => $rows, 'data' => $data, 'tableName' => PATA::$userTokensTableName
+            'rows' => $rows, 'data' => $data, 'tableName' => self::$userTokensTableName
         ]);
 
         return AppHelper::returnSuccess(['data' => ['queryResult' => count($rows)]]);
@@ -189,7 +191,7 @@ class FakeDb implements DbInterface {
         $sid = $options['sid'] ?? null;
         $userId = $options['userId'] ?? null;
 
-        $rows = self::$data[PATA::$userTokensTableName];
+        $rows = self::$data[self::$userTokensTableName];
 
         if ($id !== null) {
             $rows = self::filterByValue([
@@ -216,7 +218,7 @@ class FakeDb implements DbInterface {
         }
 
         self::delete([
-            'rows' => $rows, 'tableName' => PATA::$userTokensTableName
+            'rows' => $rows, 'tableName' => self::$userTokensTableName
         ]);
 
         return AppHelper::returnSuccess(['data' => ['queryResult' => count($rows)]]);
@@ -235,9 +237,9 @@ class FakeDb implements DbInterface {
             ]]);
         }
 
-        $newId = count(self::$data[PATA::$usersTableName]) + 1;
+        $newId = count(self::$data[self::$usersTableName]) + 1;
 
-        self::$data[PATA::$usersTableName][] = (object)[
+        self::$data[self::$usersTableName][] = (object)[
             'id' => $newId,
             'created' => $created,
             'email' => $email,
@@ -253,7 +255,7 @@ class FakeDb implements DbInterface {
         $data = $options['data'] ?? [];
         $id = $options['id'] ?? null;
 
-        $rows = self::$data[PATA::$usersTableName];
+        $rows = self::$data[self::$usersTableName];
 
         if ($id !== null) {
             $rows = self::filterByValue([
@@ -262,7 +264,7 @@ class FakeDb implements DbInterface {
         }
 
         self::update([
-            'rows' => $rows, 'data' => $data, 'tableName' => PATA::$usersTableName
+            'rows' => $rows, 'data' => $data, 'tableName' => self::$usersTableName
         ]);
 
         return AppHelper::returnSuccess(['data' => ['queryResult' => count($rows)]]);
@@ -274,7 +276,7 @@ class FakeDb implements DbInterface {
         $active = $options['active'] ?? null;
         $id = $options['id'] ?? null;
 
-        $rows = self::$data[PATA::$usersTableName];
+        $rows = self::$data[self::$usersTableName];
 
         if ($email !== null) {
             $rows = self::filterByValue([

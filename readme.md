@@ -2,6 +2,28 @@
 
 This library is based on https://www.yiiframework.com/wiki/2568/jwt-authentication-tutorial
 
+## Install
+
+### Composer
+
+```shell
+composer require luk-z/php-api-token-auth
+```
+
+### Manual
+
+Donwload ad extract source code from github, then include in you project:
+
+```php
+require_once SDIM_LIB_PATA_DIR.'/index.php';
+```
+
+## Run test
+
+```shell
+vendor/bin/phpunit
+```
+
 ## TODO
 
 - https://phpstan.org/ see https://github.com/firebase/php-jwt/blob/main/.github/workflows/tests.yml

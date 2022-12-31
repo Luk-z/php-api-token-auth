@@ -13,8 +13,6 @@ require_once 'constants.php';
  * Php Api Token Authentication Class
  */
 class PATA {
-    public static $usersTableName;
-    public static $userTokensTableName;
     public static $accessTokenName;
     public static $refreshTokenName;
     public static $activateTokenName;
@@ -27,8 +25,6 @@ class PATA {
      * Initialize the library passing dome configuration information.
      */
     public static function init($options = []) {
-        self::$usersTableName = $options['usersTableName'] ?? PATA_DEFAULT_USERS_TABLE_NAME;
-        self::$userTokensTableName = $options['userTokensTableName'] ?? PATA_DEFAULT_TOKENS_TABLE_NAME;
         self::$accessTokenName = $options['accessTokenName'] ?? PATA_DEFAULT_ACCESS_TOKEN;
         self::$refreshTokenName = $options['refreshTokenName'] ?? PATA_DEFAULT_REFRESH_TOKEN;
         self::$activateTokenName = $options['activateTokenName'] ?? PATA_DEFAULT_ACTIVATE_TOKEN;
