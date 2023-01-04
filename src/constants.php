@@ -9,6 +9,7 @@ define('PATA_DEFAULT_TOKENS_TABLE_NAME', 'tokens');
 define('PATA_DEFAULT_ACCESS_TOKEN', 'at');
 define('PATA_DEFAULT_REFRESH_TOKEN', 'rt');
 define('PATA_DEFAULT_ACTIVATE_TOKEN', 'act');
+define('PATA_DEFAULT_CHANGE_PASSWORD_TOKEN', 'change_psw');
 define('PATA_DEFAULT_COOKIE_REFRESH_TOKEN_NAME', 'rn_rt');
 define('PATA_DEFAULT_ENDPOINT_REFRESH_TOKEN', '/auth/refresh-token');
 define('PATA_DEFAULT_DOMAIN_REFRESH_TOKEN', 'api-develop.ronchesisrl.it');
@@ -48,6 +49,9 @@ define('PATA_ERROR_ACTIVATE_DUPLICATED_TOKEN', 'activate_duplicated_token');
 define('PATA_ERROR_ACTIVATE_TOKEN_NOTFOUND', 'activate_token_notfound');
 define('PATA_ERROR_ACTIVATE_EMPTY_TOKEN', 'activate_empty_token');
 
+define('PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL', 'forgot_password_invalid_email');
+define('PATA_ERROR_FORGOT_PASSWORD_ALREADY_PRESENT', 'forgot_password_already_present');
+
 //DATE FORMAT
 define('PATA_DATE_FORMAT_MYSQL', 'Y-m-d H:i:s');
 define('PATA_TOKEN_EXPIRATION_VALUE', '-1'); // used to force token expiration
@@ -55,6 +59,8 @@ define('PATA_TOKEN_EXPIRATION_VALUE_INFINITE', 0); // token will not expire
 
 //TOKEN EXPIRATION (in seconds)
 define('PATA_ACCESS_TOKEN_DURATION', 60 * 60 * 24); // 1 day
+define('PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION', 60 * 60 * 24); // 1 day
+define('PATA_CHANGE_PASSWORD_TOKEN_DURATION', 60 * 15); // 15 min
 // define("PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION", 60*60*24*2); // 2 days
 
 //REGEX

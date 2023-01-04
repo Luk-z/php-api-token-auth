@@ -292,7 +292,7 @@ class AuthHelper {
             'sid' => '',
             'token' => $activationToken,
             'token_type' => PATA::$activateTokenName,
-            'expiration' => DateTimeHelper::getAccessTokenExpiration(['date' => $created]),
+            'expiration' => DateTimeHelper::getActivateAccountTokenExpiration(['date' => $created]),
         ]]);
 
         if (!$result) {
@@ -402,6 +402,85 @@ class AuthHelper {
         return DbHelper::deleteToken(['sid' => $sid]);
     }
 
+    /**
+     * forgotPassword()
+     * Check if email exists then send email with change password link
+     * 1. check email is valid
+     * 2. find user
+     * 3. find change password tokens
+     *  3.1 if expired, delete it
+     *  3.2 if not expired return error
+     */
+    public static function forgotPassword($options = []) {
+        $email = $options['email'] ?? '';
+
+        // 1. check email is valid
+        if (!ValidateHelper::email(['value' => $email])) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'Wrong email',
+                'code' => PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL,
+                'fields' => [['name' => 'email']]
+            ]]);
+        }
+
+        // 2. find user
+        ['data' => ['items' => $users]] = DbHelper::selectUser([
+            'email' => $email
+        ]);
+
+        if (count($users) <= 0) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'Wrong email',
+                'code' => PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL,
+                'fields' => [['name' => 'email']]
+            ]]);
+        }
+
+        $userId = $users[0]->id;
+
+        // 3. find change password tokens
+        ['data' => ['items' => $tokens]] = DbHelper::selectChangePasswordToken([
+            'user_id' => $userId,
+        ]);
+
+        if (count($tokens) > 0) {
+            //check expiration
+            ['result' => $hasExpired, 'diff' => $diff] = DateTimeHelper::hasExpired([
+                'date' => intval($tokens[0]->expiration)
+            ]);
+            if ($hasExpired) {
+                DbHelper::deleteToken(['token' => $tokens[0]->token]);
+            } else {
+                // 3.2 if not expired return error
+                return AppHelper::returnError([
+                    'error' => [
+                        'message' => 'Already present',
+                        'code' => PATA_ERROR_FORGOT_PASSWORD_ALREADY_PRESENT,
+                    ],
+                    'customData' => ['secondsLeft' => $diff]
+                ]);
+            }
+        }
+
+        // generate changePasswordTokenName
+        $changePasswordToken = AuthHelper::generateChangePasswordToken();
+        $created = DateTimeHelper::getMysqlUTC();
+        ['data' => ['queryResult' => $tokenInsertResult]] = DbHelper::createToken(['data' => [
+            'created' => $created,
+            'modified' => $created,
+            'user_id' => $users[0]->id,
+            'sid' => '',
+            'token' => $changePasswordToken,
+            'token_type' => PATA::$changePasswordTokenName,
+            'expiration' => DateTimeHelper::getChangePasswordTokenExpiration(['date' => $created]),
+        ]]);
+
+        return AppHelper::returnSuccess(['data' => [
+            'changePasswordToken' => $changePasswordToken,
+            'queryResult' => $tokenInsertResult]
+        ]);
+    }
+
     public static function generateAndSaveUserTokens($options = []) {
         $userId = $options['userId'] ?? '';
 
@@ -459,6 +538,10 @@ class AuthHelper {
     }
 
     public static function generateActivateAccountToken($options = []) {
+        return self::generateToken(['length' => 32]);
+    }
+
+    public static function generateChangePasswordToken($options = []) {
         return self::generateToken(['length' => 32]);
     }
 

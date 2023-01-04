@@ -288,4 +288,49 @@ final class FeatureTest extends TestCase {
         $res = DbHelper::selectAccessToken(['sid' => $sid]);
         $this->assertEquals(count($res['data']['items']), 0);
     }
+
+    public function testForgotPassword() {
+        $originalData = self::mockUserData();
+        $item = ['email' => 'testForgotPassword@test.it', 'password' => 'Test123!p2'] + $originalData;
+        ['data' => ['id' => $userId]] = DbHelper::createUser(['data' => $item]);
+
+        $res = PATA::forgotPassword();
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL);
+
+        $res = PATA::forgotPassword(['email' => 'ffffhhhh.it']);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL);
+
+        $res = PATA::forgotPassword(['email' => 'ffff@hhhh.it']);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL);
+
+        $res = PATA::forgotPassword(['email' => 'testForgotPassword@test.it']);
+        $this->assertEquals($res['result'], true);
+        $this->assertEquals(!!$res['data']['changePasswordToken'], true);
+        $this->assertEquals($res['data']['queryResult'] === 1, true);
+        $changePasswordToken = $res['data']['changePasswordToken'];
+
+        $res = PATA::forgotPassword(['email' => 'testForgotPassword@test.it']);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'] === PATA_ERROR_FORGOT_PASSWORD_ALREADY_PRESENT, true);
+        $this->assertEquals($res['secondsLeft'] > 0, true);
+
+        $res = DbHelper::updateToken(['token' => $changePasswordToken, 'data' => ['expiration' => 1]]);
+        $res = PATA::forgotPassword(['email' => 'testForgotPassword@test.it']);
+        $this->assertEquals($res['result'], true);
+        $this->assertEquals(!!$res['data']['changePasswordToken'], true);
+        $this->assertEquals($res['data']['queryResult'] === 1, true);
+        $changePasswordToken2 = $res['data']['changePasswordToken'];
+
+        ['data' => ['items' => $tokens]] = DbHelper::selectToken(['token' => $changePasswordToken]);
+        $this->assertEquals(count($tokens) === 0, true);
+
+        ['data' => ['items' => $tokens]] = DbHelper::selectToken(['token' => $changePasswordToken2]);
+        $this->assertEquals(count($tokens) === 1, true);
+
+        ['data' => ['items' => $tokens]] = DbHelper::selectChangePasswordToken(['userId' => $userId]);
+        $this->assertEquals(count($tokens) === 1, true);
+    }
 }

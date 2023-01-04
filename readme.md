@@ -310,6 +310,51 @@ Returns:
 - Error codes:
   - ... all error codes returned by Authenticate
 
+### PATA::forgotPassword()
+
+Check if email exists then send email with change password link:
+
+1. check email is valid
+2. find user
+3. find change password tokens
+   3.1 if expired, delete it
+   3.2 if not expired return error
+
+Params:
+
+- `string` email (required)
+
+Returns:
+
+- Success response
+
+```php
+[
+    "result" => true,
+    "data"=>[
+        "changePasswordToken" => string,
+        "queryResult" => int,
+    ]
+]
+```
+
+- Error response:
+
+```php
+[
+    "result" => false,
+    "error" => [
+        "message" => string,
+        "code" => string,
+    ],
+    "secondsLeft" => int // only if a valid token is already present, indicates the remaining seconds till token expiration
+]
+```
+
+- Error codes:
+  - PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL
+  - PATA_ERROR_FORGOT_PASSWORD_ALREADY_PRESENT
+
 ## Developing
 
 ### Install php-cs-fixer

@@ -41,6 +41,11 @@ class DbHelper {
         return self::selectToken($options + ['type' => PATA::$refreshTokenName]);
     }
 
+    public static function selectChangePasswordToken($options = []) {
+        //@todo maybe cache value
+        return self::selectToken($options + ['type' => PATA::$changePasswordTokenName]);
+    }
+
     public static function selectToken($options = []) {
         return self::$db->selectToken($options);
     }

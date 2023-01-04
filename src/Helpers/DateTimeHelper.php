@@ -23,6 +23,14 @@ class DateTimeHelper {
         return self::getUTCTimestamp($options) + PATA_ACCESS_TOKEN_DURATION;
     }
 
+    public static function getActivateAccountTokenExpiration($options = []) {
+        return self::getUTCTimestamp($options) + PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION;
+    }
+
+    public static function getChangePasswordTokenExpiration($options = []) {
+        return self::getUTCTimestamp($options) + PATA_CHANGE_PASSWORD_TOKEN_DURATION;
+    }
+
     public static function getRefreshTokenExpiration($options = []) {
         return PATA_TOKEN_EXPIRATION_VALUE_INFINITE;
     }
@@ -45,9 +53,12 @@ class DateTimeHelper {
         }
 
         if ($expirationDateTimestamp === PATA_TOKEN_EXPIRATION_VALUE_INFINITE) {
-            return ['result' => false];
+            return ['result' => false, 'diff' => 0];
         }
 
-        return ['result' => self::getUTCTimestamp() > $expirationDateTimestamp];
+        return [
+            'result' => self::getUTCTimestamp() > $expirationDateTimestamp,
+            'diff' => $expirationDateTimestamp - self::getUTCTimestamp()
+        ];
     }
 }

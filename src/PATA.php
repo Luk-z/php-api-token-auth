@@ -16,6 +16,7 @@ class PATA {
     public static $accessTokenName;
     public static $refreshTokenName;
     public static $activateTokenName;
+    public static $changePasswordTokenName;
     public static $cookieRefreshTokenName;
     public static $endpointRefreshToken;
     public static $domainRefreshToken;
@@ -28,6 +29,7 @@ class PATA {
         self::$accessTokenName = $options['accessTokenName'] ?? PATA_DEFAULT_ACCESS_TOKEN;
         self::$refreshTokenName = $options['refreshTokenName'] ?? PATA_DEFAULT_REFRESH_TOKEN;
         self::$activateTokenName = $options['activateTokenName'] ?? PATA_DEFAULT_ACTIVATE_TOKEN;
+        self::$changePasswordTokenName = $options['changePasswordTokenName'] ?? PATA_DEFAULT_CHANGE_PASSWORD_TOKEN;
         self::$cookieRefreshTokenName = $options['cookieRefreshTokenName'] ?? PATA_DEFAULT_COOKIE_REFRESH_TOKEN_NAME;
         self::$endpointRefreshToken = $options['endpointRefreshToken'] ?? PATA_DEFAULT_ENDPOINT_REFRESH_TOKEN;
         self::$domainRefreshToken = $options['domainRefreshToken'] ?? PATA_DEFAULT_DOMAIN_REFRESH_TOKEN;
@@ -98,5 +100,13 @@ class PATA {
      */
     public static function logoutUser($options = []) {
         return AuthHelper::logoutUser($options);
+    }
+
+    /**
+     * forgotPassword()
+     * Check if email exists then send email with change password link
+     */
+    public static function forgotPassword($options = []) {
+        return AuthHelper::forgotPassword($options);
     }
 }
