@@ -477,6 +477,7 @@ class AuthHelper {
 
         return AppHelper::returnSuccess(['data' => [
             'changePasswordToken' => $changePasswordToken,
+            'shouldSendChangePasswordEmail' => true,
             'queryResult' => $tokenInsertResult]
         ]);
     }

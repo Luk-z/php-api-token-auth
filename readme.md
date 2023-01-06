@@ -333,6 +333,7 @@ Returns:
     "result" => true,
     "data"=>[
         "changePasswordToken" => string,
+        "shouldSendChangePasswordEmail" => string,
         "queryResult" => int,
     ]
 ]

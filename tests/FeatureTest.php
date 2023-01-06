@@ -322,6 +322,7 @@ final class FeatureTest extends TestCase {
         $this->assertEquals($res['result'], true);
         $this->assertEquals(!!$res['data']['changePasswordToken'], true);
         $this->assertEquals($res['data']['queryResult'] === 1, true);
+        $this->assertEquals($res['data']['shouldSendChangePasswordEmail'], true);
         $changePasswordToken2 = $res['data']['changePasswordToken'];
 
         ['data' => ['items' => $tokens]] = DbHelper::selectToken(['token' => $changePasswordToken]);
