@@ -557,7 +557,11 @@ class AuthHelper {
         ]);
 
         if ($queryResult === 1) {
-            return AppHelper::returnSuccess(['data' => ['queryResult' => $queryResult]]);
+            return AppHelper::returnSuccess(['data' => [
+                'queryResult' => $queryResult,
+                'email' => $users[0]->email,
+                'userId' => $users[0]->id,
+            ]]);
         }
 
         return AppHelper::returnError(['error' => [
