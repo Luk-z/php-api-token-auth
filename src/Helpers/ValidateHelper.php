@@ -23,6 +23,13 @@ class ValidateHelper {
         return !!$value;
     }
 
+    //@todo do some smarter cheks
+    public static function changePasswordToken($options = []) {
+        $value = $options['value'] ?? '';
+
+        return !!$value;
+    }
+
     public static function email($options = []) {
         $value = $options['value'] ?? '';
 

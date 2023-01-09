@@ -334,4 +334,45 @@ final class FeatureTest extends TestCase {
         ['data' => ['items' => $tokens]] = DbHelper::selectChangePasswordToken(['userId' => $userId]);
         $this->assertEquals(count($tokens) === 1, true);
     }
+
+    public function testChangePassword() {
+        $originalData = self::mockUserData();
+        $userPsw = 'Test123!p2';
+        $newUserPsw = 'Fook123!p3';
+        $item = ['email' => 'testChangePassword@test.it', 'password' => $userPsw] + $originalData;
+        ['data' => ['id' => $userId]] = DbHelper::createUser(['data' => $item]);
+
+        $res = PATA::forgotPassword(['email' => 'testChangePassword@test.it']);
+        $changePasswordToken = $res['data']['changePasswordToken'];
+
+        $res = PATA::changePassword();
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_INVALID_PASSWORD);
+
+        $res = PATA::changePassword(['password' => $newUserPsw]);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_INVALID_TOKEN);
+
+        $res = PATA::changePassword(['password' => $newUserPsw, 'token' => 'aaaaa']);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_TOKEN_NOT_FOUND);
+
+        $res = DbHelper::updateToken(['token' => $changePasswordToken, 'data' => ['expiration' => 1]]);
+        $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_TOKEN_EXPIRED);
+
+        $res = PATA::forgotPassword(['email' => 'testChangePassword@test.it']);
+        $changePasswordToken = $res['data']['changePasswordToken'];
+
+        $res = PATA::changePassword(['password' => $userPsw, 'token' => $changePasswordToken]);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_PASSWORD_NOT_CHANGED);
+
+        $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
+        $this->assertEquals($res['result'], true);
+        $this->assertEquals($res['data']['queryResult'], true);
+
+        // no need to test PATA_ERROR_CHANGE_PASSWORD_UPDATE_USER
+    }
 }

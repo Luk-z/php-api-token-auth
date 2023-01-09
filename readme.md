@@ -280,7 +280,7 @@ First executes authenticate() to check accessToken then delete user tokens assoc
 Params:
 
 - `string` sid (required)
-- `accessToken` accessToken (required)
+- `string` accessToken (required)
 
 Returns:
 
@@ -317,8 +317,8 @@ Check if email exists then send email with change password link:
 1. check email is valid
 2. find user
 3. find change password tokens
-   3.1 if expired, delete it
-   3.2 if not expired return error
+   1. if expired, delete it
+   2. if not expired return error
 
 Params:
 
@@ -355,6 +355,51 @@ Returns:
 - Error codes:
   - PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL
   - PATA_ERROR_FORGOT_PASSWORD_ALREADY_PRESENT
+
+### PATA::changePassword()
+
+Check if email exists then send email with change password link:
+
+1. check email is valid
+2. find user
+3. find change password tokens
+   1. if expired, delete it
+   2. if not expired return error
+
+Params:
+
+- `string` password (required)
+- `string` token (required) - change password token
+
+Returns:
+
+- Success response
+
+```php
+[
+    "result" => true
+]
+```
+
+- Error response:
+
+```php
+[
+    "result" => false,
+    "error" => [
+        "message" => string,
+        "code" => string,
+    ],
+]
+```
+
+- Error codes:
+  - PATA_ERROR_CHANGE_PASSWORD_INVALID_PASSWORD
+  - PATA_ERROR_CHANGE_PASSWORD_INVALID_TOKEN
+  - PATA_ERROR_CHANGE_PASSWORD_TOKEN_NOT_FOUND
+  - PATA_ERROR_CHANGE_PASSWORD_TOKEN_EXPIRED
+  - PATA_ERROR_CHANGE_PASSWORD_PASSWORD_NOT_CHANGED
+  - PATA_ERROR_CHANGE_PASSWORD_UPDATE_USER
 
 ## Developing
 

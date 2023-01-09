@@ -410,6 +410,7 @@ class AuthHelper {
      * 3. find change password tokens
      *  3.1 if expired, delete it
      *  3.2 if not expired return error
+     * TODO: check activation
      */
     public static function forgotPassword($options = []) {
         $email = $options['email'] ?? '';
@@ -440,7 +441,7 @@ class AuthHelper {
 
         // 3. find change password tokens
         ['data' => ['items' => $tokens]] = DbHelper::selectChangePasswordToken([
-            'user_id' => $userId,
+            'userId' => $userId,
         ]);
 
         if (count($tokens) > 0) {
@@ -480,6 +481,89 @@ class AuthHelper {
             'shouldSendChangePasswordEmail' => true,
             'queryResult' => $tokenInsertResult]
         ]);
+    }
+
+    /**
+     * forgotPassword(password, token)
+     * Check if password and token are valid then change password of the associated user
+     * 1. check password is valid
+     * 2. check token is valid and not expired
+     * 3. check password is changed
+     * 4. change password in db
+     * TODO: check activation
+     */
+    public static function changePassword($options = []) {
+        $password = $options['password'] ?? '';
+        $token = $options['token'] ?? '';
+
+        // 1. check password is valid
+        if (!ValidateHelper::password(['value' => $password])) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'Wrong password',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_INVALID_PASSWORD,
+            ]]);
+        }
+
+        // 2. check token is valid and not expired
+        if (!ValidateHelper::changePasswordToken(['value' => $token])) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'Token not valid',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_INVALID_TOKEN,
+            ]]);
+        }
+
+        ['data' => ['items' => $tokens]] = DbHelper::selectChangePasswordToken([
+            'token' => $token,
+        ]);
+
+        if (count($tokens) === 0) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'Token not found',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_TOKEN_NOT_FOUND,
+            ]]);
+        }
+
+        ['result' => $hasExpired] = DateTimeHelper::hasExpired([
+            'date' => intval($tokens[0]->expiration)
+        ]);
+        if ($hasExpired) {
+            DbHelper::deleteToken(['token' => $tokens[0]->token]);
+            return AppHelper::returnError(['error' => [
+                'message' => 'Token expired',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_TOKEN_EXPIRED,
+            ]]);
+        }
+
+        // 3. check password is changed
+        $hashedPassword = HashHelper::hash(['value' => $password]);
+        ['data' => ['items' => $users]] = DbHelper::selectUser([
+            'id' => $tokens[0]->user_id,
+        ]);
+
+        if (
+            count($users) > 0
+            && HashHelper::hashCheck(['value' => $password, 'hashedValue' => $users[0]->password])
+        ) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'Password not changed',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_PASSWORD_NOT_CHANGED,
+            ]]);
+        }
+
+        // 4. change password in db
+        ['data' => ['queryResult' => $queryResult]] = DbHelper::updateUser([
+            'data' => ['password' => $password],
+            'id' => $tokens[0]->user_id
+        ]);
+
+        if ($queryResult === 1) {
+            return AppHelper::returnSuccess(['data' => ['queryResult' => $queryResult]]);
+        }
+
+        return AppHelper::returnError(['error' => [
+            'message' => 'Error updating user',
+            'code' => PATA_ERROR_CHANGE_PASSWORD_UPDATE_USER
+        ]]);
     }
 
     public static function generateAndSaveUserTokens($options = []) {

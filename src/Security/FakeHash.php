@@ -10,6 +10,7 @@ class FakeHash implements Hash {
     public function hashCheck(array $options = []): bool {
         $value = $options['value'] ?? '';
         $hashedValue = $options['hashedValue'] ?? '';
+
         return $value === $hashedValue;
     }
 }

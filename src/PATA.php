@@ -109,4 +109,12 @@ class PATA {
     public static function forgotPassword($options = []) {
         return AuthHelper::forgotPassword($options);
     }
+
+    /**
+     * changePassword()
+     * Check if password and token are valid then change password of the associated user
+     */
+    public static function changePassword($options = []) {
+        return AuthHelper::changePassword($options);
+    }
 }

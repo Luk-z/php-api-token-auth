@@ -52,6 +52,13 @@ define('PATA_ERROR_ACTIVATE_EMPTY_TOKEN', 'activate_empty_token');
 define('PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL', 'forgot_password_invalid_email');
 define('PATA_ERROR_FORGOT_PASSWORD_ALREADY_PRESENT', 'forgot_password_already_present');
 
+define('PATA_ERROR_CHANGE_PASSWORD_INVALID_PASSWORD', 'change_password_invalid_password');
+define('PATA_ERROR_CHANGE_PASSWORD_INVALID_TOKEN', 'change_password_invalid_token');
+define('PATA_ERROR_CHANGE_PASSWORD_TOKEN_NOT_FOUND', 'change_password_token_not_found');
+define('PATA_ERROR_CHANGE_PASSWORD_TOKEN_EXPIRED', 'change_password_token_expired');
+define('PATA_ERROR_CHANGE_PASSWORD_PASSWORD_NOT_CHANGED', 'change_password_password_not_changed');
+define('PATA_ERROR_CHANGE_PASSWORD_UPDATE_USER', 'change_password_update_user');
+
 //DATE FORMAT
 define('PATA_DATE_FORMAT_MYSQL', 'Y-m-d H:i:s');
 define('PATA_TOKEN_EXPIRATION_VALUE', '-1'); // used to force token expiration
