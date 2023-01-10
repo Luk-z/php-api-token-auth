@@ -104,7 +104,7 @@ class PATA {
 
     /**
      * forgotPassword()
-     * Check if email exists then send email with change password link
+     * Check if email exists then send email with change password link (only if user is activated)
      */
     public static function forgotPassword($options = []) {
         return AuthHelper::forgotPassword($options);
@@ -112,7 +112,7 @@ class PATA {
 
     /**
      * changePassword()
-     * Check if password and token are valid then change password of the associated user
+     * Check if password and token are valid then change password of the associated user (only if user is activated)
      */
     public static function changePassword($options = []) {
         return AuthHelper::changePassword($options);

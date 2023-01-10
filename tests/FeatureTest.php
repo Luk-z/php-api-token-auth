@@ -291,8 +291,11 @@ final class FeatureTest extends TestCase {
 
     public function testForgotPassword() {
         $originalData = self::mockUserData();
-        $item = ['email' => 'testForgotPassword@test.it', 'password' => 'Test123!p2'] + $originalData;
+        $item = ['email' => 'testForgotPassword@test.it', 'password' => 'Test123!p2', 'active' => 1] + $originalData;
         ['data' => ['id' => $userId]] = DbHelper::createUser(['data' => $item]);
+
+        $item = ['email' => 'testForgotPassword2@test.it', 'password' => 'Test123!p2111'] + $originalData;
+        ['data' => ['id' => $userId2]] = DbHelper::createUser(['data' => $item]);
 
         $res = PATA::forgotPassword();
         $this->assertEquals($res['result'], false);
@@ -305,6 +308,10 @@ final class FeatureTest extends TestCase {
         $res = PATA::forgotPassword(['email' => 'ffff@hhhh.it']);
         $this->assertEquals($res['result'], false);
         $this->assertEquals($res['error']['code'], PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL);
+
+        $res = PATA::forgotPassword(['email' => 'testForgotPassword2@test.it']);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_FORGOT_PASSWORD_USER_NOT_ACTIVE);
 
         $res = PATA::forgotPassword(['email' => 'testForgotPassword@test.it']);
         $this->assertEquals($res['result'], true);
@@ -339,8 +346,11 @@ final class FeatureTest extends TestCase {
         $originalData = self::mockUserData();
         $userPsw = 'Test123!p2';
         $newUserPsw = 'Fook123!p3';
-        $item = ['email' => 'testChangePassword@test.it', 'password' => $userPsw] + $originalData;
+        $item = ['email' => 'testChangePassword@test.it', 'password' => $userPsw, 'active' => 1] + $originalData;
         ['data' => ['id' => $userId]] = DbHelper::createUser(['data' => $item]);
+
+        $item = ['email' => 'testChangePassword2@test.it', 'password' => $userPsw, 'active' => 1] + $originalData;
+        ['data' => ['id' => $userId2]] = DbHelper::createUser(['data' => $item]);
 
         $res = PATA::forgotPassword(['email' => 'testChangePassword@test.it']);
         $changePasswordToken = $res['data']['changePasswordToken'];
@@ -372,6 +382,14 @@ final class FeatureTest extends TestCase {
         $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
         $this->assertEquals($res['result'], true);
         $this->assertEquals($res['data']['queryResult'], true);
+
+        $res = PATA::forgotPassword(['email' => 'testChangePassword2@test.it']);
+        $changePasswordToken = $res['data']['changePasswordToken'];
+
+        DbHelper::updateUser(['id' => $userId2, 'data' => ['active' => 0]]);
+        $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_USER_NOT_ACTIVE);
 
         // no need to test PATA_ERROR_CHANGE_PASSWORD_UPDATE_USER
     }

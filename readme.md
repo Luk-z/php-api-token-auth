@@ -312,10 +312,10 @@ Returns:
 
 ### PATA::forgotPassword()
 
-Check if email exists then send email with change password link:
+Check if email exists then send email with change password link (only if user is activated)
 
 1. check email is valid
-2. find user
+2. find active user
 3. find change password tokens
    1. if expired, delete it
    2. if not expired return error
@@ -358,13 +358,13 @@ Returns:
 
 ### PATA::changePassword()
 
-Check if email exists then send email with change password link:
+Check if password and token are valid then change password of the associated user (only if user is activated):
 
-1. check email is valid
-2. find user
-3. find change password tokens
-   1. if expired, delete it
-   2. if not expired return error
+1. check password is valid
+2. check token is valid and not expired
+3. check user is active
+4. check password is changed
+5. change password in db
 
 Params:
 

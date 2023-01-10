@@ -404,13 +404,12 @@ class AuthHelper {
 
     /**
      * forgotPassword()
-     * Check if email exists then send email with change password link
+     * Check if email exists then send email with change password link (only if user is activated)
      * 1. check email is valid
-     * 2. find user
+     * 2. find active user
      * 3. find change password tokens
      *  3.1 if expired, delete it
      *  3.2 if not expired return error
-     * TODO: check activation
      */
     public static function forgotPassword($options = []) {
         $email = $options['email'] ?? '';
@@ -420,11 +419,10 @@ class AuthHelper {
             return AppHelper::returnError(['error' => [
                 'message' => 'Wrong email',
                 'code' => PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL,
-                'fields' => [['name' => 'email']]
             ]]);
         }
 
-        // 2. find user
+        // 2. find active user
         ['data' => ['items' => $users]] = DbHelper::selectUser([
             'email' => $email
         ]);
@@ -433,7 +431,13 @@ class AuthHelper {
             return AppHelper::returnError(['error' => [
                 'message' => 'Wrong email',
                 'code' => PATA_ERROR_FORGOT_PASSWORD_INVALID_EMAIL,
-                'fields' => [['name' => 'email']]
+            ]]);
+        }
+
+        if (!$users[0]->active) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'User not active',
+                'code' => PATA_ERROR_FORGOT_PASSWORD_USER_NOT_ACTIVE,
             ]]);
         }
 
@@ -484,13 +488,13 @@ class AuthHelper {
     }
 
     /**
-     * forgotPassword(password, token)
-     * Check if password and token are valid then change password of the associated user
+     * changePassword(password, token)
+     * Check if password and token are valid then change password of the associated user (only if user is activated)
      * 1. check password is valid
      * 2. check token is valid and not expired
-     * 3. check password is changed
-     * 4. change password in db
-     * TODO: check activation
+     * 3. check user is active
+     * 4. check password is changed
+     * 5. change password in db
      */
     public static function changePassword($options = []) {
         $password = $options['password'] ?? '';
@@ -534,12 +538,27 @@ class AuthHelper {
             ]]);
         }
 
-        // 3. check password is changed
+        // 3. check user is active
         $hashedPassword = HashHelper::hash(['value' => $password]);
         ['data' => ['items' => $users]] = DbHelper::selectUser([
             'id' => $tokens[0]->user_id,
         ]);
 
+        if (count($users) === 0) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'User not found',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_USER_NOT_FOUND,
+            ]]);
+        }
+
+        if (!$users[0]->active) {
+            return AppHelper::returnError(['error' => [
+                'message' => 'User not active',
+                'code' => PATA_ERROR_CHANGE_PASSWORD_USER_NOT_ACTIVE,
+            ]]);
+        }
+
+        // 4. check password is changed
         if (
             count($users) > 0
             && HashHelper::hashCheck(['value' => $password, 'hashedValue' => $users[0]->password])
@@ -550,7 +569,7 @@ class AuthHelper {
             ]]);
         }
 
-        // 4. change password in db
+        // 5. change password in db
         ['data' => ['queryResult' => $queryResult]] = DbHelper::updateUser([
             'data' => ['password' => $password],
             'id' => $tokens[0]->user_id
