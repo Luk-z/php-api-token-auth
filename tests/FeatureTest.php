@@ -383,6 +383,10 @@ final class FeatureTest extends TestCase {
         $this->assertEquals($res['result'], true);
         $this->assertEquals($res['data']['queryResult'], true);
 
+        $res = PATA::changePassword(['password' => $newUserPsw . 'www', 'token' => $changePasswordToken]);
+        $this->assertEquals($res['result'], false);
+        $this->assertEquals($res['error']['code'], PATA_ERROR_CHANGE_PASSWORD_TOKEN_NOT_FOUND);
+
         $res = PATA::forgotPassword(['email' => 'testChangePassword2@test.it']);
         $changePasswordToken = $res['data']['changePasswordToken'];
 

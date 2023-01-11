@@ -112,7 +112,7 @@ class PATA {
 
     /**
      * changePassword()
-     * Check if password and token are valid then change password of the associated user (only if user is activated)
+     * Check if password and token are valid then burn token and change password of the associated user (only if user is activated)
      */
     public static function changePassword($options = []) {
         return AuthHelper::changePassword($options);

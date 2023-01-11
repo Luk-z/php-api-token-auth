@@ -489,12 +489,13 @@ class AuthHelper {
 
     /**
      * changePassword(password, token)
-     * Check if password and token are valid then change password of the associated user (only if user is activated)
+     * Check if password and token are valid then burn token and change password of the associated user (only if user is activated)
      * 1. check password is valid
      * 2. check token is valid and not expired
      * 3. check user is active
      * 4. check password is changed
      * 5. change password in db
+     * 6. delete token
      */
     public static function changePassword($options = []) {
         $password = $options['password'] ?? '';
@@ -576,6 +577,8 @@ class AuthHelper {
         ]);
 
         if ($queryResult === 1) {
+            //6. delete token
+            DbHelper::deleteToken(['token' => $tokens[0]->token]);
             return AppHelper::returnSuccess(['data' => [
                 'queryResult' => $queryResult,
                 'email' => $users[0]->email,

@@ -358,13 +358,14 @@ Returns:
 
 ### PATA::changePassword()
 
-Check if password and token are valid then change password of the associated user (only if user is activated):
+Check if password and token are valid then burn token and change password of the associated user (only if user is activated):
 
 1. check password is valid
 2. check token is valid and not expired
 3. check user is active
 4. check password is changed
 5. change password in db
+6. burn token
 
 Params:
 
