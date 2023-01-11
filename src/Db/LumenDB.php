@@ -82,7 +82,7 @@ class LumenDB implements DbInterface {
         }
 
         if ($type !== null) {
-            $query->where('type', '=', $type);
+            $query->where('token_type', '=', $type);
         }
 
         $affected = $query->update($data);
