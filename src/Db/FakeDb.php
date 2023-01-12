@@ -190,6 +190,7 @@ class FakeDb implements DbInterface {
         $token = $options['token'] ?? null;
         $sid = $options['sid'] ?? null;
         $userId = $options['userId'] ?? null;
+        $type = $options['type'] ?? null;
 
         $rows = self::$data[self::$userTokensTableName];
 
@@ -214,6 +215,12 @@ class FakeDb implements DbInterface {
         if ($userId !== null) {
             $rows = self::filterByValue([
                 'items' => $rows, 'key' => 'user_id', 'value' => $userId
+            ]);
+        }
+
+        if ($type !== null) {
+            $rows = self::filterByValue([
+                'items' => $rows, 'key' => 'token_type', 'value' => $type
             ]);
         }
 

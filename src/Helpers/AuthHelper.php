@@ -43,7 +43,7 @@ class AuthHelper {
                 'date' => intval($items[0]->expiration)
             ]);
             if ($hasExpired) {
-                ['data' => ['queryResult' => $queryResult]] = DbHelper::deleteToken(['sid' => $items[0]->sid]);
+                ['data' => ['queryResult' => $queryResult]] = DbHelper::deleteToken(['sid' => $items[0]->sid ?: '']);
 
                 return AppHelper::returnError(['error' => [
                     'message' => 'Access Token expired',
@@ -109,7 +109,7 @@ class AuthHelper {
             'date' => intval($items[0]->expiration)
         ]);
         if ($hasExpired) {
-            ['data' => ['queryResult' => $queryResult]] = DbHelper::deleteToken(['sid' => $items[0]->sid]);
+            ['data' => ['queryResult' => $queryResult]] = DbHelper::deleteToken(['sid' => $items[0]->sid ?: '']);
 
             return AppHelper::returnError([
                 'error' => [
@@ -147,7 +147,7 @@ class AuthHelper {
         }
 
         // 7. burn token and refresh token with same sid
-        ['data' => ['queryResult' => $deleteTokensResult]] = DbHelper::deleteToken(['sid' => $items[0]->sid]);
+        ['data' => ['queryResult' => $deleteTokensResult]] = DbHelper::deleteToken(['sid' => $items[0]->sid ?: '']);
 
         // 8. generate new sdi, at, rt
         ['data' => [
@@ -399,7 +399,7 @@ class AuthHelper {
         ['data' => ['sid' => $sid]] = $authResult;
 
         //deleteToken uses AppHelper::returnSuccess
-        return DbHelper::deleteToken(['sid' => $sid]);
+        return DbHelper::deleteToken(['sid' => $sid ?: '']);
     }
 
     /**
@@ -454,7 +454,7 @@ class AuthHelper {
                 'date' => intval($tokens[0]->expiration)
             ]);
             if ($hasExpired) {
-                DbHelper::deleteToken(['token' => $tokens[0]->token]);
+                DbHelper::deleteToken(['token' => $tokens[0]->token ?: '']);
             } else {
                 // 3.2 if not expired return error
                 return AppHelper::returnError([
@@ -495,7 +495,7 @@ class AuthHelper {
      * 3. check user is active
      * 4. check password is changed
      * 5. change password in db
-     * 6. delete token
+     * 6. delete current token + all access token + all refresh token
      */
     public static function changePassword($options = []) {
         $password = $options['password'] ?? '';
@@ -532,7 +532,7 @@ class AuthHelper {
             'date' => intval($tokens[0]->expiration)
         ]);
         if ($hasExpired) {
-            DbHelper::deleteToken(['token' => $tokens[0]->token]);
+            DbHelper::deleteToken(['token' => $tokens[0]->token ?: '']);
             return AppHelper::returnError(['error' => [
                 'message' => 'Token expired',
                 'code' => PATA_ERROR_CHANGE_PASSWORD_TOKEN_EXPIRED,
@@ -576,12 +576,26 @@ class AuthHelper {
         ]);
 
         if ($queryResult === 1) {
-            //6. delete token
-            DbHelper::deleteToken(['token' => $tokens[0]->token]);
+            //6. delete current token
+            ['data' => ['queryResult' => $currentTokenDeleted]] = DbHelper::deleteToken(['token' => $tokens[0]->token ?: '']);
+            //6. delete all access token
+            ['data' => ['queryResult' => $accessTokenDeleted]] = DbHelper::deleteToken([
+                'userId' => $tokens[0]->user_id ?: '',
+                'type' => PATA::$accessTokenName
+            ]);
+            //6. delete all refresh token
+            ['data' => ['queryResult' => $refreshTokenDeleted]] = DbHelper::deleteToken([
+                'userId' => $tokens[0]->user_id ?: '',
+                'type' => PATA::$refreshTokenName
+            ]);
+
             return AppHelper::returnSuccess(['data' => [
                 'queryResult' => $queryResult,
-                'email' => $users[0]->email,
-                'userId' => $users[0]->id,
+                'currentTokenDeleted' => $currentTokenDeleted,
+                'accessTokenDeleted' => $accessTokenDeleted,
+                'refreshTokenDeleted' => $refreshTokenDeleted,
+                // 'email' => $users[0]->email,
+                // 'userId' => $users[0]->id,
             ]]);
         }
 

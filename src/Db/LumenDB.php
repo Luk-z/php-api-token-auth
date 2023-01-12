@@ -95,6 +95,7 @@ class LumenDB implements DbInterface {
         $token = $options['token'] ?? null;
         $sid = $options['sid'] ?? null;
         $userId = $options['userId'] ?? null;
+        $type = $options['type'] ?? null;
 
         $query = app('db')->table(self::$userTokensTableName);
 
@@ -112,6 +113,10 @@ class LumenDB implements DbInterface {
 
         if ($userId !== null) {
             $query->where('user_id', '=', $userId);
+        }
+
+        if ($type !== null) {
+            $query->where('token_type', '=', $type);
         }
 
         $affected = $query->delete();

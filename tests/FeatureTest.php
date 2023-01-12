@@ -349,6 +349,11 @@ final class FeatureTest extends TestCase {
         $item = ['email' => 'testChangePassword@test.it', 'password' => $userPsw, 'active' => 1] + $originalData;
         ['data' => ['id' => $userId]] = DbHelper::createUser(['data' => $item]);
 
+        $res = PATA::loginUser(['email' => 'testChangePassword@test.it', 'password' => $userPsw]);
+        $this->assertEquals($res['result'], true);
+        $res = PATA::loginUser(['email' => 'testChangePassword@test.it', 'password' => $userPsw]);
+        $this->assertEquals($res['result'], true);
+
         $item = ['email' => 'testChangePassword2@test.it', 'password' => $userPsw, 'active' => 1] + $originalData;
         ['data' => ['id' => $userId2]] = DbHelper::createUser(['data' => $item]);
 
@@ -382,6 +387,9 @@ final class FeatureTest extends TestCase {
         $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
         $this->assertEquals($res['result'], true);
         $this->assertEquals($res['data']['queryResult'], true);
+        $this->assertEquals($res['data']['currentTokenDeleted'], 1);
+        $this->assertEquals($res['data']['accessTokenDeleted'], 2);
+        $this->assertEquals($res['data']['refreshTokenDeleted'], 2);
 
         $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
         $this->assertEquals($res['result'], false);
