@@ -390,6 +390,8 @@ final class FeatureTest extends TestCase {
         $this->assertEquals($res['data']['currentTokenDeleted'], 1);
         $this->assertEquals($res['data']['accessTokenDeleted'], 2);
         $this->assertEquals($res['data']['refreshTokenDeleted'], 2);
+        $this->assertEquals(!!$res['data']['email'], true);
+        $this->assertEquals(!!$res['data']['userId'], true);
 
         $res = PATA::changePassword(['password' => $newUserPsw, 'token' => $changePasswordToken]);
         $this->assertEquals($res['result'], false);

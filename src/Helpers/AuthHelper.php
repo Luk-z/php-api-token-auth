@@ -594,8 +594,8 @@ class AuthHelper {
                 'currentTokenDeleted' => $currentTokenDeleted,
                 'accessTokenDeleted' => $accessTokenDeleted,
                 'refreshTokenDeleted' => $refreshTokenDeleted,
-                // 'email' => $users[0]->email,
-                // 'userId' => $users[0]->id,
+                'email' => $users[0]->email,
+                'userId' => $users[0]->id,
             ]]);
         }
 

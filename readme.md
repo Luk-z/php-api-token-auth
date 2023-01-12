@@ -384,6 +384,8 @@ Returns:
         "currentTokenDeleted" => int, // result of deleting current change password token (should be always 1)
         "accessTokenDeleted" => int, // number of access token deleted
         "refreshTokenDeleted" => int, // number of refresh token deleted
+        "email" => int, // email of the current user
+        "userId" => int, // id of the current user
     ]
 ]
 ```
