@@ -540,7 +540,6 @@ class AuthHelper {
         }
 
         // 3. check user is active
-        $hashedPassword = HashHelper::hash(['value' => $password]);
         ['data' => ['items' => $users]] = DbHelper::selectUser([
             'id' => $tokens[0]->user_id,
         ]);
@@ -560,8 +559,10 @@ class AuthHelper {
         }
 
         // 4. check password is changed
-        $hashedPassword = HashHelper::hash(['value' => $password]);
-        if (count($users) > 0 && $hashedPassword === $users[0]->password) {
+        if (
+            count($users) > 0
+            && HashHelper::hashCheck(['value' => $password, 'hashedValue' => $users[0]->password])
+        ) {
             return AppHelper::returnError(['error' => [
                 'message' => 'Password not changed',
                 'code' => PATA_ERROR_CHANGE_PASSWORD_PASSWORD_NOT_CHANGED,
@@ -570,7 +571,7 @@ class AuthHelper {
 
         // 5. change password in db
         ['data' => ['queryResult' => $queryResult]] = DbHelper::updateUser([
-            'data' => ['password' => $hashedPassword],
+            'data' => ['password' => HashHelper::hash(['value' => $password])],
             'id' => $tokens[0]->user_id
         ]);
 
