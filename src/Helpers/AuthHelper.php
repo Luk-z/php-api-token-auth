@@ -233,7 +233,10 @@ class AuthHelper {
         ]);
 
         if ($queryResult === 1) {
-            return AppHelper::returnSuccess(['data' => ['queryResult' => $queryResult]]);
+            return AppHelper::returnSuccess(['data' => [
+                'queryResult' => $queryResult,
+                'userId' => $items[0]->user_id
+            ]]);
         }
 
         return AppHelper::returnError(['error' => [

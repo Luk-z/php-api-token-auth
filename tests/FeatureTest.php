@@ -181,6 +181,7 @@ final class FeatureTest extends TestCase {
         $res = PATA::activate(['token' => 'activate2']);
         $this->assertEquals($res['result'], true);
         $this->assertEquals($res['data']['queryResult'], 1);
+        $this->assertEquals(!!$res['data']['userId'], true);
 
         $res = DbHelper::selectUser(['email' => 'test3@test.it']);
         $this->assertEquals(count($res['data']['items']), 1);
