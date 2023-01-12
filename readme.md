@@ -159,6 +159,7 @@ Returns:
     "result" => true,
     "data" => [
         "queryResult" => int, // affected row (should be 1)
+        "userId" => int
     ]
 ]
 ```
