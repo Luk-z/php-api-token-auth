@@ -68,7 +68,7 @@ define('PATA_TOKEN_EXPIRATION_VALUE', '-1'); // used to force token expiration
 define('PATA_TOKEN_EXPIRATION_VALUE_INFINITE', 0); // token will not expire
 
 //TOKEN EXPIRATION (in seconds)
-define('PATA_ACCESS_TOKEN_DURATION', 60 * 60 * 24); // 1 day
+define('PATA_ACCESS_TOKEN_DURATION', 7 * 60 * 60 * 24); // 7 days
 define('PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION', 60 * 60 * 24); // 1 day
 define('PATA_CHANGE_PASSWORD_TOKEN_DURATION', 60 * 15); // 15 min
 // define("PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION", 60*60*24*2); // 2 days
