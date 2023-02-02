@@ -74,4 +74,8 @@ define('PATA_CHANGE_PASSWORD_TOKEN_DURATION', 60 * 15); // 15 min
 // define("PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION", 60*60*24*2); // 2 days
 
 //REGEX
-define('PATA_REGEX_PASSWORD', "/^(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/");
+// min 8 chars, 1+ lowercase letter, 1+ uppercase letter, 1+ number, 1+ special char
+// define('PATA_REGEX_PASSWORD', "/^(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$/");
+
+// min 8 chars, 1+ lowercase letter, 1+ uppercase letter, 1+ number
+define('PATA_REGEX_PASSWORD', "/^(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$/");
