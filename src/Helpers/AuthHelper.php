@@ -696,7 +696,7 @@ class AuthHelper {
         $res = setcookie(
             PATA::$cookieRefreshTokenName, //name
           $rt, //value
-          null, //expires_or_options
+          time() + PATA_REFRESH_TOKEN_TOKEN_DURATION, //expires_or_options
           PATA::$endpointRefreshToken, //path
           PATA::$domainRefreshToken, //domain
           true, //secure

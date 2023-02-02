@@ -72,6 +72,7 @@ define('PATA_ACCESS_TOKEN_DURATION', 7 * 60 * 60 * 24); // 7 days
 define('PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION', 60 * 60 * 24); // 1 day
 define('PATA_CHANGE_PASSWORD_TOKEN_DURATION', 60 * 15); // 15 min
 // define("PATA_ACTIVATE_ACCOUNT_TOKEN_DURATION", 60*60*24*2); // 2 days
+define('PATA_REFRESH_TOKEN_TOKEN_DURATION', 60 * 60 * 24 * 365); // 365 days
 
 //REGEX
 // min 8 chars, 1+ lowercase letter, 1+ uppercase letter, 1+ number, 1+ special char
