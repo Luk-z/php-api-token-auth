@@ -24,6 +24,13 @@ require_once SDIM_LIB_PATA_DIR.'/index.php';
 vendor/bin/phpunit
 ```
 
+# Use in project
+
+```shell
+composer create-project --prefer-dist laravel/lumen:^8 lumen-api.luca.ziliani.me
+composer require luk-z/php-api-token-auth
+```
+
 ## TODO
 
 - https://phpstan.org/ see https://github.com/firebase/php-jwt/blob/main/.github/workflows/tests.yml
